@@ -1,0 +1,23 @@
+{
+  "files.associations": {
+    "deque": "cpp",
+    "string": "cpp",
+    "vector": "cpp",
+    "array": "cpp",
+    "bitset": "cpp",
+    "string_view": "cpp",
+    "initializer_list": "cpp",
+    "ranges": "cpp",
+    "span": "cpp",
+    "regex": "cpp",
+    "utility": "cpp",
+    "valarray": "cpp",
+    "iostream": "cpp",
+    "*.tcc": "cpp",
+    "forward_list": "cpp",
+    "list": "cpp",
+    "chrono": "cpp"
+  },
+  "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
+  "C_Cpp.errorSquiggles": "Disabled"
+}
