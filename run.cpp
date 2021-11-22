@@ -29,11 +29,13 @@ typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
 typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
-typedef vector<ll> v64;
 typedef vector<int> v32;
+typedef vector<ll> v64;
+typedef vector<bool> vb;
 typedef vector<vector<int> > vv32;
 typedef vector<vector<ll> > vv64;
 typedef vector<vector<p64> > vvp64;
+typedef vector<vector<bool>> vvb;
 typedef vector<p64> vp64;
 typedef vector<t64> vt64;
 typedef vector<p32> vp32;
@@ -54,51 +56,32 @@ double eps = 1e-12;
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
 
-struct BIT {
-	ll n;
-	v64 arr, tree;
-	BIT() = default;
-	BIT(ll n) : n(n) {
-		arr.resize(n + 1);
-		tree.resize(n + 1, 0);
-	}
+ll max_knapsack(v64& wt, v64& val, ll n, ll k) {
+	// dp[ending index][sum]
+	vv64 dp(n + 1, v64(k, 0));
 
-	void add(ll k, ll x) {
-		// adding the element to the array
-		arr[k] += x;
-
-		// adding the element to binary indexed tree
-		while (k <= n) {
-			tree[k] += x;
-			k += (k & -k);
+	forsn(i, 1, n + 1) {
+		forsn(j, 1, k + 1) {
+			if (j < wt[i]) dp[i][j] = dp[i - 1][j];
+			else {
+				dp[i][j] = max(dp[i - 1][j], val[i] + dp[i - 1][j - wt[i]]);
+			}
 		}
 	}
 
-	ll prefix_sum(ll k) {
-		ll res = 0;
-		while (k >= 1) {
-			res += tree[k];
-			k -= (k & -k);
-		}
-		return res;
-	}
-
-	ll sum(ll i, ll j) {
-		return prefix_sum(j) - prefix_sum(i - 1);
-	}
-};
+	return dp[n][k];
+}
 
 // solution
 void potion() {
-	ll n; cin >> n;
-	BIT tree(n);
-	forsn(i, 1, n + 1) {
-		ll x; cin >> x;
-		tree.add(i, x);
-	}
-	cout << tree.sum(3, 4) << ln;
-}
+	ll n, target; cin >> n;
+	v64 wt(n + 1), val(n + 1);
+	forsn(i, 1, n + 1) cin >> wt[i];
+	forsn(i, 1, n + 1) cin >> val[i];
+	cin >> target;
 
+	cout << max_knapsack(wt, val, n, target);
+}
 
 signed main() {
 	fast_cin();
