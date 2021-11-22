@@ -1,14 +1,14 @@
-const ll mxn = 1000;
-
 struct graph {
 	ll n, m;
-	v64 adj[mxn];
+	vv64 adj;
 	vector<bool> vis;
 	graph() = default;
 	graph(ll n) : n(n) {
+		adj.resize(n + 1);
 		vis.resize(n + 1, false);
 	};
 	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
 		vis.resize(n + 1, false);
 	};
 
@@ -25,3 +25,15 @@ struct graph {
 		}
 	}
 };
+
+void potion() {
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+
+	forn(i, m) {
+		ll u, v; cin >> u >> v;
+		g.addEdge(u, v);
+	}
+
+	g.dfs(1);
+}

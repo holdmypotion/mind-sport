@@ -16,7 +16,8 @@
     "*.tcc": "cpp",
     "forward_list": "cpp",
     "list": "cpp",
-    "chrono": "cpp"
+    "chrono": "cpp",
+    "complex": "cpp"
   },
   "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
   "C_Cpp.errorSquiggles": "Disabled"
