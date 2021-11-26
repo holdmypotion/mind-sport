@@ -59,40 +59,46 @@ constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	// state: dp[i][j] -> is it possible to make j sum with first i coins
-	// transition: dp[i][j] = d[i-1][j]; -> include the previous answers
-	// dp[i][j] = true if (dp[i-1][j - coins[i-1]]) =>
-	// it is possible to make sum j if j - coins[i-1] is already made by previous coins
-	int n; cin >> n;
-	v32 coins(n);
-	int mxn = 0;
-	for (auto& ele : coins) {
-		cin >> ele;
-		mxn += ele;
-	}
+	// state: dp[i][j] -> no. of operations to make a string of length j from a string of length i
+	// transition: 
+	/**
+	 * At each step, we have 3 options - consider L and M
+	 * 1. remove the element (remove L)
+	 * 2. insert a new element (insert M)
+	 * 3. modify the existing element (modify L to M)
+	 *
+	 * Try all the options and take the minimum one!
+	 *
+	 * 1. if remove: add 1 + operations needed make j with i - 1 string
+	 * 2. if insert: add 1 + operations needed to make j - 1 with i string
+	 * 3. if modify: add cost(1 if characters don't match, 0 otherwise)
+	 * 								+ operations needed to make j - 1 with i - 1 string
+	 */
 
-	vvb dp(n + 1, vb(mxn + 1, false));
-	dp[0][0] = true;
-	for (int i = 1; i <= n; i++) {
-		for (int j = 0; j <= mxn; j++) {
-			dp[i][j] = dp[i - 1][j];
-			int left = j - coins[i - 1];
-			if (left >= 0 && dp[i - 1][left]) dp[i][j] = true;
+	string s, p, ans, posans; cin >> s >> p;
+	int n = s.length(), m = p.length(), count = 0;
+	vv32 dp(n + 1, v32(m + 1, INT_MAX));
+	dp[0][0] = 0;
+
+	forsn(i, 0, n + 1) {
+		forsn(j, 0, m + 1) {
+			int cost = (s[i - 1] != p[j - 1]); // returns 1 for mismatch and 0 otherwise
+			if (i) {
+				dp[i][j] = min(dp[i][j], dp[i - 1][j] + 1); // removing
+			}
+			if (j) {
+				dp[i][j] = min(dp[i][j], dp[i][j - 1] + 1); // inserting
+			}
+			if (i && j) {
+				dp[i][j] = min(dp[i][j], dp[i - 1][j - 1] + cost); // modifing
+			}
 		}
 	}
-
-	// for (int i = 0; i <= n; i++) {
-	// 	for (int j = 0; j <= mxn; j++) cout << dp[i][j] << " ";
+	// for (auto& r : dp) {
+	// 	for (auto& ele : r) cout << ele << " ";
 	// 	cout << ln;
 	// }
-
-	v32 ans;
-	for (int j = 1; j <= mxn; j++) {
-		if (dp[n][j]) ans.pb(j);
-	}
-
-	cout << ans.size() << ln;
-	for (auto& ele : ans) cout << ele << " ";
+	cout << dp[n][m];
 }
 
 signed main() {

@@ -1,4 +1,3 @@
-// author: holdmypotion
 #pragma GCC optimize("Ofast")
 #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
 #pragma GCC optimize("unroll-loops")
@@ -27,17 +26,13 @@ typedef long long ll;
 typedef long double ld;
 typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
-typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
 typedef vector<ll> v64;
 typedef vector<int> v32;
-typedef vector<bool> vb;
 typedef vector<vector<int> > vv32;
 typedef vector<vector<ll> > vv64;
 typedef vector<vector<p64> > vvp64;
-typedef vector<vector<bool>> vvb;
 typedef vector<p64> vp64;
-typedef vector<t64> vt64;
 typedef vector<p32> vp32;
 ll MOD = 998244353;
 double eps = 1e-12;
@@ -55,47 +50,73 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
-constexpr int mod = 1e9 + 7;
+
+auto binpow(ll base, ll exp) {
+	ll result = 1;
+	while (exp) {
+		if (exp & 1) (result *= base) %= MOD;
+		(base *= base) %= MOD;
+		exp >>= 1;
+	}
+	return result;
+}
+
+auto inverse(int i) {
+	return binpow(i, MOD - 2);
+}
+
+struct hash_t {
+	string s;
+	ll n, p, invp;
+	v64 hash, invhash, power, invpower;
+	hash_t() = default;
+	hash_t(string s) : s(s), n(s.length()) {
+		hash.assign(n, 0);
+		invhash.assign(n, 0);
+		power.assign(n, 1);
+		invpower.assign(n, 1);
+	}
+	void init() {
+		// p = 2 * rng(13, 1e8) + 1;
+		p = 29;
+		invp = inverse(p);
+		forn(i, n) {
+			power[i] = ((i ? power[i - 1] : (int)1) * p) % MOD;
+			invpower[i] = ((i ? invpower[i - 1] : (int)1) * invp) % MOD;
+			hash[i] = ((i ? hash[i - 1] : (int)0) + (s[i] - 'a' + 1) * power[i]) % MOD;
+			invhash[i] = ((i ? invhash[i - 1] * p : (int)0)) + (s[i] - 'a' + 1);
+			hash[i] %= MOD;
+			invhash[i] %= MOD;
+		}
+	}
+	ll gethash(ll l, ll r) {
+		ll f = (hash[r] - (l ? hash[l - 1] : (ll)0));
+		if (f < 0) f += MOD;
+		f *= invpower[l];
+		return f % MOD;
+	}
+	ll getinvhash(ll l, ll r) {
+		ll f = invhash[r] - (l ? invhash[l - 1] * power[r - l] % MOD : (ll)0);
+		return (f % MOD + MOD) % MOD;
+	}
+};
 
 // solution
 void potion() {
-	// state: dp[i][j] -> is it possible to make j sum with first i coins
-	// transition: dp[i][j] = d[i-1][j]; -> include the previous answers
-	// dp[i][j] = true if (dp[i-1][j - coins[i-1]]) =>
-	// it is possible to make sum j if j - coins[i-1] is already made by previous coins
-	int n; cin >> n;
-	v32 coins(n);
-	int mxn = 0;
-	for (auto& ele : coins) {
-		cin >> ele;
-		mxn += ele;
+	string s, p; cin >> s >> p;
+	ll n = s.length(), m = p.length();
+
+	hash_t doc(s), search(p); doc.init(); search.init();
+
+	int count = 0;
+	ll search_hash = search.gethash(0, m - 1);
+	for (int i = 0; i + m - 1 < n; i++) {
+		if (doc.gethash(i, i + m - 1) == search_hash) count++;
 	}
-
-	vvb dp(n + 1, vb(mxn + 1, false));
-	dp[0][0] = true;
-	for (int i = 1; i <= n; i++) {
-		for (int j = 0; j <= mxn; j++) {
-			dp[i][j] = dp[i - 1][j];
-			int left = j - coins[i - 1];
-			if (left >= 0 && dp[i - 1][left]) dp[i][j] = true;
-		}
-	}
-
-	// for (int i = 0; i <= n; i++) {
-	// 	for (int j = 0; j <= mxn; j++) cout << dp[i][j] << " ";
-	// 	cout << ln;
-	// }
-
-	v32 ans;
-	for (int j = 1; j <= mxn; j++) {
-		if (dp[n][j]) ans.pb(j);
-	}
-
-	cout << ans.size() << ln;
-	for (auto& ele : ans) cout << ele << " ";
+	cout << count << ln;
 }
 
-signed main() {
+int main() {
 	fast_cin();
 #ifndef ONLINE_JUDGE
 	freopen("input.txt", "r", stdin);
@@ -105,4 +126,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate!
+} // Alright then, mate

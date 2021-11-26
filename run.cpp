@@ -56,32 +56,83 @@ double eps = 1e-12;
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
 
-ll max_knapsack(v64& wt, v64& val, ll n, ll k) {
-	// dp[ending index][sum]
-	vv64 dp(n + 1, v64(k, 0));
-
-	forsn(i, 1, n + 1) {
-		forsn(j, 1, k + 1) {
-			if (j < wt[i]) dp[i][j] = dp[i - 1][j];
-			else {
-				dp[i][j] = max(dp[i - 1][j], val[i] + dp[i - 1][j - wt[i]]);
-			}
-		}
+struct graph {
+	ll n, m, timer;
+	vv64 adj, dp;
+	v64 in, out;
+	vb vis;
+	graph() = default;
+	graph(ll n) : n(n) {
+		timer = 0;
+		adj.resize(n + 1);
+		dp.resize(n + 1, v64(18));
+		vis.resize(n + 1);
+		in.resize(n + 1);
+		out.resize(n + 1);
 	}
 
-	return dp[n][k];
-}
+	graph(ll n, ll m) : n(n), m(m) {
+		timer = 0;
+		adj.resize(n + 1);
+		dp.resize(n + 1, v64(18));
+		vis.resize(n + 1);
+		in.resize(n + 1);
+		out.resize(n + 1);
+	}
+
+	void addEdge(ll u, ll v) {
+		adj[u].pb(v);
+	}
+
+	void dfs(ll u, ll p) {
+		dp[u][0] = p;
+		in[u] = timer++;
+		for (int i = 1; i <= 18; i++) {
+			dp[u][i] = dp[dp[u][i - 1]][i - 1];
+		}
+		for (auto& v : adj[u]) {
+			if (v != p) dfs(v, u);
+		}
+		out[u] = timer++;
+	}
+
+	bool is_ancestor(ll u, ll v) {
+		// u is_ancestor of v;
+		return in[u] <= in[v] and out[u] >= out[v];
+	}
+
+	ll lca(ll u, ll v) {
+		if (is_ancestor(u, v)) return u;
+		if (is_ancestor(v, u)) return v;
+		for (ll i = 18; ~i; i--) {
+			cout << ~i << ln;
+			if (!is_ancestor(dp[u][i], v)) {
+				u = dp[u][i];
+			}
+		}
+		// u = not is_ancestor of v;
+		return dp[u][0]; // parent of u is lca
+	}
+};
 
 // solution
 void potion() {
-	ll n, target; cin >> n;
-	v64 wt(n + 1), val(n + 1);
-	forsn(i, 1, n + 1) cin >> wt[i];
-	forsn(i, 1, n + 1) cin >> val[i];
-	cin >> target;
+	ll n, q; cin >> n >> q;
+	graph g(n);
+	forsn(i, 2, n + 1) {
+		// we are getting parents for each node
+		ll p; cin >> p;
+		g.addEdge(i, p);
+		g.addEdge(p, i);
+	}
+	g.dfs(1, 1);
 
-	cout << max_knapsack(wt, val, n, target);
+	while (q--) {
+		ll u, k; cin >> u >> k;
+		cout << g.lca(u, k) << ln;
+	}
 }
+
 
 signed main() {
 	fast_cin();

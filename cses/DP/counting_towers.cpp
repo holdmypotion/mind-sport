@@ -56,43 +56,37 @@ double eps = 1e-12;
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
+constexpr int mxn = 1e6 + 6;
 
 // solution
 void potion() {
-	// state: dp[i][j] -> is it possible to make j sum with first i coins
-	// transition: dp[i][j] = d[i-1][j]; -> include the previous answers
-	// dp[i][j] = true if (dp[i-1][j - coins[i-1]]) =>
-	// it is possible to make sum j if j - coins[i-1] is already made by previous coins
-	int n; cin >> n;
-	v32 coins(n);
-	int mxn = 0;
-	for (auto& ele : coins) {
-		cin >> ele;
-		mxn += ele;
+	// state: dp[i][w] -> max no. of blocks for height i and width w
+	// dp[i][1] = last blocks are separate | || |
+	// dp[i][2] = last blocks are fused |   |
+
+	// transition:
+	//              _  _    _  _    _  _    _  _     _ _
+	//  _  _       | || |  |_|| |  | ||_|  |_||_|   |_ _|
+	// | || | =>   | || |, | || |, | || |, | || |,  | | |
+	//              _ _    _ _    _ _ 
+	//  _ _        |   |  |_|_|  |_ _|
+	// |   |  =>   |   |, |   |, |   |
+	// dp[i][1] = dp[i-1][1]*4 + dp[i-1][2]
+	// dp[i][2] = dp[i-1][1] + dp[i-1][2]*2	/**
+
+	vv64 dp(mxn, v64(3));
+	dp[1][1] = dp[1][2] = 1;
+
+	forsn(i, 2, mxn) {
+		dp[i][1] = ((dp[i - 1][1] * 4) % mod + dp[i - 1][2]) % mod;
+		dp[i][2] = (dp[i - 1][1] + (dp[i - 1][2] * 2) % mod) % mod;
 	}
 
-	vvb dp(n + 1, vb(mxn + 1, false));
-	dp[0][0] = true;
-	for (int i = 1; i <= n; i++) {
-		for (int j = 0; j <= mxn; j++) {
-			dp[i][j] = dp[i - 1][j];
-			int left = j - coins[i - 1];
-			if (left >= 0 && dp[i - 1][left]) dp[i][j] = true;
-		}
+	int t; cin >> t;
+	while (t--) {
+		int n; cin >> n;
+		cout << (dp[n][1] + dp[n][2]) % mod << ln;
 	}
-
-	// for (int i = 0; i <= n; i++) {
-	// 	for (int j = 0; j <= mxn; j++) cout << dp[i][j] << " ";
-	// 	cout << ln;
-	// }
-
-	v32 ans;
-	for (int j = 1; j <= mxn; j++) {
-		if (dp[n][j]) ans.pb(j);
-	}
-
-	cout << ans.size() << ln;
-	for (auto& ele : ans) cout << ele << " ";
 }
 
 signed main() {

@@ -57,42 +57,43 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-// solution
-void potion() {
-	// state: dp[i][j] -> is it possible to make j sum with first i coins
-	// transition: dp[i][j] = d[i-1][j]; -> include the previous answers
-	// dp[i][j] = true if (dp[i-1][j - coins[i-1]]) =>
-	// it is possible to make sum j if j - coins[i-1] is already made by previous coins
-	int n; cin >> n;
-	v32 coins(n);
-	int mxn = 0;
-	for (auto& ele : coins) {
-		cin >> ele;
-		mxn += ele;
-	}
+int max_pages(v32 price, v32 pages, int n, int x) {
+	vv32 dp(n + 1, v32(x + 1, 0));
 
-	vvb dp(n + 1, vb(mxn + 1, false));
-	dp[0][0] = true;
 	for (int i = 1; i <= n; i++) {
-		for (int j = 0; j <= mxn; j++) {
+		for (int j = 1; j <= x; j++) {
 			dp[i][j] = dp[i - 1][j];
-			int left = j - coins[i - 1];
-			if (left >= 0 && dp[i - 1][left]) dp[i][j] = true;
+			int remaining = j - price[i - 1];
+			if (remaining >= 0) {
+				dp[i][j] = max(dp[i][j], dp[i - 1][remaining] + pages[i - 1]);
+			}
 		}
 	}
 
-	// for (int i = 0; i <= n; i++) {
-	// 	for (int j = 0; j <= mxn; j++) cout << dp[i][j] << " ";
-	// 	cout << ln;
-	// }
+	return dp[n][x];
+}
 
-	v32 ans;
-	for (int j = 1; j <= mxn; j++) {
-		if (dp[n][j]) ans.pb(j);
+/**
+ * Questions where you are supposed to either count or print distinct combinations
+ * or use elements only once, it is easier to approach it using 2D dp arrays
+ * rather then trying to compress the state.
+ */
+
+ // solution
+void potion() {
+	// state: dp[i][j] -> max pages for price under j with first i books.
+	// transition: dp[i][j] = max(dp[i][j], dp[i][j - price[i-1]] + pages[i-1]);
+	int n, target; cin >> n >> target;
+	v32 price(n), pages(n);
+	for (int i = 0; i < n; i++) {
+		cin >> price[i];
 	}
 
-	cout << ans.size() << ln;
-	for (auto& ele : ans) cout << ele << " ";
+	for (int i = 0; i < n; i++) {
+		cin >> pages[i];
+	}
+
+	cout << max_pages(price, pages, n, target);
 }
 
 signed main() {
@@ -105,4 +106,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate!
+} // Alright then, mate

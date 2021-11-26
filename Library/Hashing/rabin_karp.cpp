@@ -1,20 +1,3 @@
-// seed_seq seed{
-// 	(uint64_t)chrono::duration_cast<chrono::nanoseconds>
-// 	(chrono::high_resolution_clock::now().time_since_epoch()).count(),
-// 	(uint64_t)__builtin_ia32_rdtsc(),
-// 	(uint64_t)(uintptr_t)make_unique<char>().get()
-// };
-
-
-
-// mt19937_64 mersenne(seed);
-
-
-
-// ll rng(ll l, ll r) {
-// 	return uniform_int_distribution<ll>(l, r)(mersenne);
-// }
-
 auto binpow(ll base, ll exp) {
 	ll result = 1;
 	while (exp) {
@@ -25,7 +8,7 @@ auto binpow(ll base, ll exp) {
 	return result;
 }
 
-auto inverse(ll i) {
+auto inverse(int i) {
 	return binpow(i, MOD - 2);
 }
 
@@ -43,26 +26,39 @@ struct hash_t {
 	void init() {
 		// p = 2 * rng(13, 1e8) + 1;
 		p = 29;
-		invp = inverse(p); // 1/29
+		invp = inverse(p);
 		forn(i, n) {
-			power[i] = ((i ? power[i - 1] : (ll)1) * p) % MOD;
-			invpower[i] = ((i ? invpower[i - 1] : (ll)1) * invp) % MOD;
-			hash[i] = ((i ? hash[i - 1] : (ll)0) + (s[i] - 'a' + 1) * power[i]) % MOD;
-			// invhash[i] = ((i ? invhash[i - 1] * p : (ll)0)) + (s[i] - 'a' + 1);
+			power[i] = ((i ? power[i - 1] : (int)1) * p) % MOD;
+			invpower[i] = ((i ? invpower[i - 1] : (int)1) * invp) % MOD;
+			hash[i] = ((i ? hash[i - 1] : (int)0) + (s[i] - 'a' + 1) * power[i]) % MOD;
+			invhash[i] = ((i ? invhash[i - 1] * p : (int)0)) + (s[i] - 'a' + 1);
 			hash[i] %= MOD;
-			// invhash[i] %= MOD;
+			invhash[i] %= MOD;
 		}
 	}
-
 	ll gethash(ll l, ll r) {
 		ll f = (hash[r] - (l ? hash[l - 1] : (ll)0));
 		if (f < 0) f += MOD;
 		f *= invpower[l];
 		return f % MOD;
 	}
-
 	ll getinvhash(ll l, ll r) {
 		ll f = invhash[r] - (l ? invhash[l - 1] * power[r - l] % MOD : (ll)0);
 		return (f % MOD + MOD) % MOD;
 	}
 };
+
+// solution
+void potion() {
+	string s, p; cin >> s >> p;
+	ll n = s.length(), m = p.length();
+
+	hash_t doc(s), search(p); doc.init(); search.init();
+
+	int count = 0;
+	ll search_hash = search.gethash(0, m - 1);
+	for (int i = 0; i + m - 1 < n; i++) {
+		if (doc.gethash(i, i + m - 1) == search_hash) count++;
+	}
+	cout << count << ln;
+}

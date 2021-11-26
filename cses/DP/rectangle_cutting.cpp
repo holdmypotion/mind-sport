@@ -59,40 +59,33 @@ constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	// state: dp[i][j] -> is it possible to make j sum with first i coins
-	// transition: dp[i][j] = d[i-1][j]; -> include the previous answers
-	// dp[i][j] = true if (dp[i-1][j - coins[i-1]]) =>
-	// it is possible to make sum j if j - coins[i-1] is already made by previous coins
-	int n; cin >> n;
-	v32 coins(n);
-	int mxn = 0;
-	for (auto& ele : coins) {
-		cin >> ele;
-		mxn += ele;
-	}
+	// state: dp[i][j] -> no. of cuts needed to all square of a i * j rectangle
+	// transition: for each (i, j) pair there are k (1 < k < i or 1 < k < j) possibilities of a cut.
+	// 
+	int a, b; cin >> a >> b;
+	vv32 dp(a + 1, v32(b + 1));
 
-	vvb dp(n + 1, vb(mxn + 1, false));
-	dp[0][0] = true;
-	for (int i = 1; i <= n; i++) {
-		for (int j = 0; j <= mxn; j++) {
-			dp[i][j] = dp[i - 1][j];
-			int left = j - coins[i - 1];
-			if (left >= 0 && dp[i - 1][left]) dp[i][j] = true;
+	forn(i, a + 1) {
+		forn(j, b + 1) {
+			if (i == j) dp[i][j] = 0;
+			else {
+				dp[i][j] = INT_MAX;
+				forsn(k, 1, j) {
+					// trying all the horizontal cuts
+					dp[i][j] = min(dp[i][j], dp[i][k] + dp[i][j - k] + 1);
+				}
+				forsn(k, 1, i) {
+					// trying all the vertical cuts
+					dp[i][j] = min(dp[i][j], dp[k][j] + dp[i - k][j] + 1);
+				}
+			}
 		}
 	}
-
-	// for (int i = 0; i <= n; i++) {
-	// 	for (int j = 0; j <= mxn; j++) cout << dp[i][j] << " ";
+	// for (auto& r : dp) {
+	// 	for (auto& ele : r) cout << ele << " ";
 	// 	cout << ln;
 	// }
-
-	v32 ans;
-	for (int j = 1; j <= mxn; j++) {
-		if (dp[n][j]) ans.pb(j);
-	}
-
-	cout << ans.size() << ln;
-	for (auto& ele : ans) cout << ele << " ";
+	cout << dp[a][b];
 }
 
 signed main() {

@@ -17,7 +17,12 @@
     "forward_list": "cpp",
     "list": "cpp",
     "chrono": "cpp",
-    "complex": "cpp"
+    "complex": "cpp",
+    "optional": "cpp",
+    "system_error": "cpp",
+    "thread": "cpp",
+    "typeindex": "cpp",
+    "variant": "cpp"
   },
   "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
   "C_Cpp.errorSquiggles": "Disabled"

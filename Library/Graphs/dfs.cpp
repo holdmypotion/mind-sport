@@ -14,7 +14,6 @@ struct graph {
 
 	void addEdge(ll a, ll b) {
 		adj[a].pb(b);
-		adj[b].pb(a);
 	}
 
 	void dfs(ll u) {
@@ -33,6 +32,7 @@ void potion() {
 	forn(i, m) {
 		ll u, v; cin >> u >> v;
 		g.addEdge(u, v);
+		g.addEdge(v, u);
 	}
 
 	g.dfs(1);
