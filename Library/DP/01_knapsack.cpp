@@ -1,6 +1,6 @@
 ll max_knapsack(v64& wt, v64& val, ll n, ll k) {
 	// dp[ending index of weights][sum]
-	vv64 dp(n + 1, v64(k, 0));
+	vv64 dp(n + 1, v64(k + 1, 0));
 
 	forsn(i, 1, n + 1) {
 		forsn(j, 1, k + 1) {

@@ -1,3 +1,19 @@
+// * Problem Statement
+// You have a sequence of N distinct elements. Find the length of the 
+// longest subsequence such that each successive element is a multiple of the
+// element before it (if exists) in the subsequence.
+
+// Input:
+// The first line consists of N, the number of elements in the sequence.
+// The next line consists of N space-separated integers, the contents of the sequence.
+
+// Output:
+// Print a single integer, consisting of the answer to the given input instance.
+
+// Constraints:
+// 1 <= N <= 104
+// 1 <= A[i] <= 106
+
 // author: holdmypotion
 #pragma GCC optimize("Ofast")
 #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
@@ -55,35 +71,45 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
+constexpr int mod = 1e9 + 7;
 
-int minimum_coins(v32& coins, int n, int x) {
-	v64 dp(x + 1, INF);
-	dp[0] = 0;
-	/**
-	 * 0-> 0
-	 * 1-> 1
-	 * 2->
-	 */
-	forn(i, x + 1) {
-		for (int j = 0; j < n && i >= coins[j]; j++) {
-			dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+int count = 1, max_count = 1;
+
+void longest_subsequence(int i, int n, vvb& dp) {
+	max_count = max(max_count, ::count);
+	for (int j = i + 1; j < n; j++) {
+		// if jth is multiple of ith 
+		if (dp[i][j]) {
+			::count++;
+			// now check the longet sequence starting from jth element
+			longest_subsequence(j, n, dp);
 		}
 	}
-	return (dp[x] == INF ? -1 : dp[x]);
+	// backtrack
+	::count = 1;
 }
 
 // solution
 void potion() {
-	// state -> dp[i] -> min num of coins required to make i
-	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
+	int n; cin >> n;
+	vector<vector<bool>> dp(n, vector<bool>(n, 0));
+	vector<int> arr(n);
+	for (auto& ele : arr) cin >> ele;
 
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
+	// dp[i][j] = mark all the multiples in sequential order as true
+	for (int i = 0; i < n - 1; i++) {
+		for (int j = i + 1; j < n; j++) {
+			if (arr[i] == 1 || arr[j] >= arr[i] && arr[j] % arr[i] == 0) {
+				dp[i][j] = true;
+			}
+		}
 	}
 
-	cout << minimum_coins(coins, n, x);
+	// count the longest subsequence starting from the ith element
+	for (int i = 0; i < n - 1; i++) {
+		longest_subsequence(i, n, dp);
+	}
+	cout << max_count << ln;
 }
 
 signed main() {
@@ -96,4 +122,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate
+} // Alright then, mate!

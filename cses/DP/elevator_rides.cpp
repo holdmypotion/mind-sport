@@ -55,35 +55,39 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
-
-int minimum_coins(v32& coins, int n, int x) {
-	v64 dp(x + 1, INF);
-	dp[0] = 0;
-	/**
-	 * 0-> 0
-	 * 1-> 1
-	 * 2->
-	 */
-	forn(i, x + 1) {
-		for (int j = 0; j < n && i >= coins[j]; j++) {
-			dp[i] = min(dp[i], dp[i - coins[j]] + 1);
-		}
-	}
-	return (dp[x] == INF ? -1 : dp[x]);
-}
+constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	// state -> dp[i] -> min num of coins required to make i
-	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
-
 	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
-	}
+	v32 wt(n);
+	for (auto& ele : wt) cin >> ele;
 
-	cout << minimum_coins(coins, n, x);
+	// pair<rides(S), last(S)>
+	// rides(S) -> min no. of rides needed for subset S
+	// last(S) -> total wt of the last ride
+	vp64 dp(1 << n);
+
+	dp[0] = { 1, 0 };
+	for (int s = 1; s < (1 << n); s++) { // go through all the subsets
+		dp[s] = { n + 1, 0 }; // initial rides = n+1
+		for (int p = 0; p < n; p++) {
+			if (s & (1 << p)) { // checking if p in subset s
+				auto option = dp[s ^ (1 << p)]; // taking p out of subset s
+				if (option.second + wt[p] <= x) {
+					// add p to an existing ride
+					option.second += wt[p];
+				}
+				else {
+					// reserve a new ride for p
+					option.first++;
+					option.second = wt[p];
+				}
+				dp[s] = min(dp[s], option);
+			}
+		}
+	}
+	cout << dp[(1 << n) - 1].first;
 }
 
 signed main() {
@@ -96,4 +100,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate
+} // Alright then, mate!

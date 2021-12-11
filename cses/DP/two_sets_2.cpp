@@ -55,35 +55,36 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
-
-int minimum_coins(v32& coins, int n, int x) {
-	v64 dp(x + 1, INF);
-	dp[0] = 0;
-	/**
-	 * 0-> 0
-	 * 1-> 1
-	 * 2->
-	 */
-	forn(i, x + 1) {
-		for (int j = 0; j < n && i >= coins[j]; j++) {
-			dp[i] = min(dp[i], dp[i - coins[j]] + 1);
-		}
-	}
-	return (dp[x] == INF ? -1 : dp[x]);
-}
+constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	// state -> dp[i] -> min num of coins required to make i
-	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
-
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
+	// state: dp[i][j] -> no. of subsets from 0..i that add up to j
+	// transition: dp[i][j] = d[i-1][j] + dp[i-1][j-i];
+	// either the i was chosen or it wasn't
+	int n, sum = 0; cin >> n;
+	for (int i = 1; i <= n; i++) {
+		sum += i;
+	}
+	if (sum & 1) {
+		cout << 0;
+		return;
 	}
 
-	cout << minimum_coins(coins, n, x);
+	sum /= 2;
+	// sum / 2 -> total value of subset.
+	vv32 dp(n, v32(sum + 1, 0));
+	dp[0][0] = 1;
+	for (int i = 1; i < n; i++) { // only till n-1 so as to only count a subset once
+		for (int j = 0; j <= sum; j++) {
+			dp[i][j] = dp[i - 1][j];
+			int left = j - i;
+			if (left >= 0) {
+				(dp[i][j] += dp[i - 1][left]) %= mod;
+			}
+		}
+	}
+	cout << dp[n - 1][sum];
 }
 
 signed main() {
@@ -96,4 +97,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate
+} // Alright then, mate!

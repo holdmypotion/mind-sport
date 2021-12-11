@@ -55,35 +55,45 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
-
-int minimum_coins(v32& coins, int n, int x) {
-	v64 dp(x + 1, INF);
-	dp[0] = 0;
-	/**
-	 * 0-> 0
-	 * 1-> 1
-	 * 2->
-	 */
-	forn(i, x + 1) {
-		for (int j = 0; j < n && i >= coins[j]; j++) {
-			dp[i] = min(dp[i], dp[i - coins[j]] + 1);
-		}
-	}
-	return (dp[x] == INF ? -1 : dp[x]);
-}
+constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	// state -> dp[i] -> min num of coins required to make i
-	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
+	// * As both play optimally
+	// * Player 1 -> wants to maximize score1 - score2
+	// * Player 2 -> wants to minimize score1 - score2
+	// ? Hence, there choices at each stage should be same, i.e. optimal.
+	// state: dp[l][r] -> max difference (score1-score2) if considering the interval [l, r]
+	// transition: dp[l][r] = max(nums[l] - dp[l+1][r], nums[r] - dp[l][r-1]);
+	// As dp[l+1][r] contains the optimal choice taken if it was player1's turn
+	// Hence dp[l+1][r] will be player2's best option as well.
+	// ? score1 reduces by nums[l] - dp[l+1][r]
 
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
+	int n; cin >> n;
+	v32 nums(n);
+	ll sum = 0;
+	for (auto& ele : nums) {
+		cin >> ele;
+		sum += ele;
 	}
 
-	cout << minimum_coins(coins, n, x);
+	vv64 dp(n, v64(n));
+	for (int l = n - 1; l >= 0;l--) {
+		for (int r = l; r < n; r++) {
+			if (l == r) {
+				dp[l][r] = nums[l];
+			}
+			else {
+				dp[l][r] = max(nums[l] - dp[l + 1][r], nums[r] - dp[l][r - 1]);
+			}
+			cout << dp[l][r] << ln;
+		}
+	}
+	// sum = score1 + score2
+	// dp[0][n-1] = score1 - score2
+	// hence (sum + dp[0][n-1]) / 2 -> score1
+	cout << dp[0][n - 1] << ln;
+	cout << (sum + dp[0][n - 1]) / 2;
 }
 
 signed main() {
@@ -96,4 +106,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate
+} // Alright then, mate!

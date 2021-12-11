@@ -55,35 +55,39 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
+constexpr int mod = 1e9 + 7;
 
-int minimum_coins(v32& coins, int n, int x) {
-	v64 dp(x + 1, INF);
-	dp[0] = 0;
-	/**
-	 * 0-> 0
-	 * 1-> 1
-	 * 2->
-	 */
-	forn(i, x + 1) {
-		for (int j = 0; j < n && i >= coins[j]; j++) {
-			dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+/**
+ * Sample:
+8
+7 3 5 4 8 2 9 8
+ *
+ *
+ */
+
+ // solution
+void potion() {
+	// state: dp[i] -> longest subsequence starting from ith index
+	int n; cin >> n;
+	v32 dp;
+
+	for (int i = 0; i < n; i++) {
+		int x; cin >> x;
+		auto it = lower_bound(all(dp), x);
+		// cout << *it << ln;
+		if (it == dp.end()) {
+			dp.pb(x);
+			cout << ln << "if: ";
+			for (auto& ele : dp) cout << ele << " ";
+		}
+		else {
+			*it = x;
+			cout << ln << "else: ";
+			for (auto& ele : dp) cout << ele << " ";
 		}
 	}
-	return (dp[x] == INF ? -1 : dp[x]);
-}
-
-// solution
-void potion() {
-	// state -> dp[i] -> min num of coins required to make i
-	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
-
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
-	}
-
-	cout << minimum_coins(coins, n, x);
+	cout << ln;
+	cout << dp.size();
 }
 
 signed main() {
@@ -96,4 +100,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate
+} // Alright then, mate!

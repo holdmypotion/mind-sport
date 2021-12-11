@@ -55,44 +55,43 @@ double eps = 1e-12;
 #define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((ll)(x).size())
-constexpr int mod = 1e9 + 7;
+
+int minimum_coins(v32& coins, int n, int x) {
+	v64 dp(x + 1, INF);
+	dp[0] = 0;
+	/**
+	 * 0-> 0
+	 * 1-> 1
+	 * 2-> 2
+	 * 3 -> 3
+	 * 4 -> 4
+	 * 5 -> 1
+	 * ..
+	 * 11 -> 33
+	 */
+	forn(i, x + 1) {
+		// coins -> [1 5 7]
+		for (int j = 0; j < n; j++) {
+			if (i >= coins[j]) {
+				dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+			}
+		}
+	}
+	return (dp[x] == INF ? -1 : dp[x]);
+}
 
 // solution
 void potion() {
-	// state: dp[i][j] -> is it possible to make j sum with first i coins
-	// transition: dp[i][j] = d[i-1][j]; -> include the previous answers
-	// dp[i][j] = true if (dp[i-1][j - coins[i-1]]) =>
-	// it is possible to make sum j if j - coins[i-1] is already made by previous coins
-	int n; cin >> n;
+	// state -> dp[i] -> min num of coins required to make i
+	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
+
+	int n, x; cin >> n >> x;
 	v32 coins(n);
-	int mxn = 0;
-	for (auto& ele : coins) {
-		cin >> ele;
-		mxn += ele;
+	forn(i, n) {
+		cin >> coins[i];
 	}
 
-	vvb dp(n + 1, vb(mxn + 1, false));
-	dp[0][0] = true;
-	for (int i = 1; i <= n; i++) {
-		for (int j = 0; j <= mxn; j++) {
-			dp[i][j] = dp[i - 1][j];
-			int left = j - coins[i - 1];
-			if (left >= 0 && dp[i - 1][left]) dp[i][j] = true;
-		}
-	}
-
-	// for (int i = 0; i <= n; i++) {
-	// 	for (int j = 0; j <= mxn; j++) cout << dp[i][j] << " ";
-	// 	cout << ln;
-	// }
-
-	v32 ans;
-	for (int j = 1; j <= mxn; j++) {
-		if (dp[n][j]) ans.pb(j);
-	}
-
-	cout << ans.size() << ln;
-	for (auto& ele : ans) cout << ele << " ";
+	cout << minimum_coins(coins, n, x);
 }
 
 signed main() {
@@ -105,4 +104,4 @@ signed main() {
 	// cin >> t;
 	while (t--) potion();
 	return 0;
-} // Alright then, mate!
+} // Alright then, mate
