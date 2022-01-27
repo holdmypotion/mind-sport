@@ -16,20 +16,20 @@
 // !       elements, while we want to find minimum elements. By using negative distances,
 // !       we can directly use the default priority queue
 
-const ll mxn = 1000;
-
 struct graph {
 	ll n, m;
-	vp64 adj[mxn];
+	vvp64 adj;
 	vector<bool> processed;
 	v64 dis;
 	priority_queue<pair<ll, ll>> q;
 	graph() = default;
 	graph(ll n) : n(n) {
+		adj.resize(n + 1);
 		processed.resize(n + 1, false);
 		dis.resize(n + 1, INF);
 	};
 	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
 		processed.resize(n + 1, false);
 		dis.resize(n + 1, INF);
 	};

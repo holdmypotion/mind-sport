@@ -58,44 +58,24 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
-
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
-	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
-
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	int base; cin >> base;
+	// col -> number of columns of squares that can be in the triangle
+	// the '-1' at the end is just extra as we are dealing with a triangle not a square
+
+	int side = 2, col = (base / 2) - 1;
+	int base_taken = 2, count = 0;
+	for (int i = 1; i <= col; i++) {
+		// in a right angled isosceles triangle if you shoot a perpendicular on the base
+		// the side with the pointy thingy forms another isosceles triangle.
+		// checkout the sol.png
+		int height = base - base_taken;
+		count += height / side;
+		base_taken += 2;
 	}
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	cout << count << ln;
 }
 
 signed main() {
@@ -105,7 +85,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!

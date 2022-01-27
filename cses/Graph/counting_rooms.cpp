@@ -34,7 +34,6 @@ typedef vector<int> v32;
 typedef vector<bool> vb;
 typedef vector<vector<int> > vv32;
 typedef vector<vector<ll> > vv64;
-typedef vector<vector<p32> > vvp32;
 typedef vector<vector<p64> > vvp64;
 typedef vector<vector<bool>> vvb;
 typedef vector<p64> vp64;
@@ -58,44 +57,61 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
+struct grid {
+	int n, m;
+	vv32 adj;
+	vvb vis;
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	int dr[4] = { 0, 0, 1, -1 };
+	int dc[4] = { 1, -1, 0, 0 };
+	string ds = "RLDU";
+
+	grid() = default;
+	grid(int n, int m) : n(n), m(m) {
+		adj.resize(n, v32(m, 0));
+		vis.resize(n, vb(m, false));
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void fillgrid() {
+		forn(i, n) {
+			string s; cin >> s;
+			forn(j, m) {
+				if (s[j] == '.') adj[i][j] = 1;
+			}
+		}
 	}
-}
+
+	bool isValid(int x, int y) {
+		bool possible = (x < n&& x >= 0 && y < m&& y >= 0);
+		if (!possible || vis[x][y] || adj[x][y] == 0) return false;
+		return true;
+	}
+
+	void dfs(int x, int y) {
+		vis[x][y] = true;
+		forn(i, 4) {
+			int nx = x + dr[i], ny = y + dc[i];
+			if (isValid(nx, ny)) dfs(nx, ny);
+		}
+	}
+};
 
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
-	}
+	int n, m; cin >> n >> m;
+	grid g(n, m);
+	g.fillgrid();
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
+	int count = 0;
+	forn(i, n) {
+		forn(j, m) {
+			if (g.adj[i][j] && !g.vis[i][j]) {
+				g.dfs(i, j);
+				count++;
+			}
 		}
 	}
 
-
-
+	cout << count;
 }
 
 signed main() {

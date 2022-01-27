@@ -58,43 +58,51 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
-
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
-	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
-
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
+	ll n; cin >> n;
+	string s; cin >> s;
+	ll x, y; cin >> x >> y;
+	vp64 turncost;
+
+	for (auto ch : s) {
+		switch (ch) {
+		case 'E':
+			turncost.pb({ min(2 * x, 2 * y), 0 });
+			break;
+		case 'W':
+			turncost.pb({ 0, min(2 * x, 2 * y) });
+			break;
+		case 'N':
+			turncost.pb({ min(3 * x, y), min(x, 3 * y) });
+			break;
+		case 'S':
+			turncost.pb({ min(x, 3 * y),  min(3 * x, y) });
+			break;
+		default:
+			break;
+		}
+	}
+
+	v64 looking_west(n), looking_east(n);
+
+	looking_east[0] = turncost[0].se;
+	forsn(i, 1, n) {
+		looking_east[i] = looking_east[i - 1] + turncost[i].se;
+	}
+
+	looking_west[n - 1] = turncost[n - 1].fi;
+	rforsn(i, n - 2, 0) {
+		looking_west[i] = looking_west[i + 1] + turncost[i].fi;
+	}
+
+	ll bestchoice = min(looking_east[n - 1], looking_west[0]);
+
 	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+		bestchoice = min(bestchoice, (looking_east[i] + looking_west[i + 1]));
 	}
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
+	cout << bestchoice << ln;
 
 }
 
@@ -105,7 +113,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!

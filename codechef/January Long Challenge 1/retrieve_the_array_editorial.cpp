@@ -58,54 +58,96 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
+using namespace std;
+long long readInt(long long l, long long r, char endd) {
+	long long x = 0;
+	int cnt = 0;
+	int fi = -1;
+	bool is_neg = false;
+	while (true) {
+		char g = getchar();
+		if (g == '-') {
+			assert(fi == -1);
+			is_neg = true;
+			continue;
+		}
+		if ('0' <= g && g <= '9') {
+			x *= 10;
+			x += g - '0';
+			if (cnt == 0) {
+				fi = g - '0';
+			}
+			cnt++;
+			assert(fi != 0 || cnt == 1);
+			assert(fi != 0 || is_neg == false);
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
-	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+			assert(!(cnt > 19 || (cnt == 19 && fi > 1)));
+		}
+		else if (g == endd) {
+			assert(cnt > 0);
+			if (is_neg) {
+				x = -x;
+			}
+			assert(l <= x && x <= r);
+			return x;
+		}
+		else {
+			assert(false);
+		}
 	}
 }
-
-void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
-	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
-}
-
-signed main() {
-	fast_cin();
+int main() {
+	ios_base::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
 #ifndef ONLINE_JUDGE
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
+	int t;
+	t = readInt(1, 200000, '\n');
+	int temp = 1 << 18;
+	// cout << temp << ln;
+	int ns = 0;
+	while (t--) {
+		int n, x;
+		n = readInt(1, 100000, ' ');
+		x = readInt(1, 500000, '\n');
+		ns += n;
+		assert(ns <= 300000);
+		if (n == 1) {
+			cout << x << "\n";
+			continue;
+		}
+		int ans[n];
+		for (int i = 0; i < n - 1; i++) {
+			x ^= i;
+			ans[i] = i;
+		}
+		// cout << "x: " << x << ln;
+		if (x >= n && x <= 500000) {
+			ans[n - 1] = x;
+		}
+		else {
+			if (x > 500000) {
+				ans[n - 1] = x - temp;
+			}
+			else {
+				ans[n - 1] = x + temp;
+			}
+			if (x == ans[n - 2]) {
+				// if x == n-2 then ans[n-2] += temp will result into
+				// ans[n-1] == ans[n-2]
+				// as  ans[n-1] = x + temp
+				// ans ans[n-2] = ans[n-2] + temp
+				ans[0] = temp;
+			}
+			else {
+				ans[n - 2] += temp;
+			}
+		}
+		for (int i = 0; i < n; i++) {
+			cout << ans[i] << " ";
+		}
+		cout << "\n";
+	}
 	return 0;
-} // Alright then, mate!
+}

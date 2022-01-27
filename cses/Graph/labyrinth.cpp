@@ -58,44 +58,88 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
+struct grid {
+	int n, m;
+	p32 src, dest;
+	vector<string> adj;
+	vvb vis;
+	vvp32 parent;
+	vector<vector<char>> path;
 
-	tree() = default;
-	tree(ll n) : n(n) {
+	int dr[4] = { 0, 0, 1, -1 };
+	int dc[4] = { 1, -1, 0, 0 };
+	string ds = "RLDU";
+
+	grid() = default;
+	grid(int n, int m) : n(n), m(m) {
+		parent.resize(n, vp32(m));
+		path.resize(n, vector<char>(m));
 		adj.resize(n);
+		vis.resize(n, vb(m, false));
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void fillgrid() {
+		for (auto& ele : adj) cin >> ele;
+
+		forn(i, n) {
+			forn(j, m) {
+				if (adj[i][j] == 'A') src = { i, j };
+				else if (adj[i][j] == 'B') dest = { i, j };
+			}
+		}
 	}
-}
+
+	bool isValid(int x, int y) {
+		bool possible = (x < n&& x >= 0 && y < m&& y >= 0);
+		if (!possible || vis[x][y] || adj[x][y] == '#') return false;
+		return true;
+	}
+
+	void bfs() {
+		queue<p32> q;
+		q.push({ src.fi, src.se });
+		parent[src.fi][src.se] = { 0, 0 };
+		while (!q.empty()) {
+			int x = q.front().fi;
+			int y = q.front().se;
+			q.pop();
+			vis[x][y] = true;
+			if (adj[x][y] == 'B') break; // reached destination
+			forn(i, 4) {
+				int nx = x + dr[i], ny = y + dc[i];
+				if (isValid(nx, ny)) {
+					q.push({ nx, ny });
+					vis[nx][ny] = true;
+					parent[nx][ny] = { x, y }; // storing the parent of nx, ny
+					path[nx][ny] = ds[i];	// move made to reach nx, ny
+				}
+			}
+		}
+	}
+
+	void shortest_path() {
+		bfs();
+		string s;
+		if (!vis[dest.fi][dest.se]) cout << "NO" << ln; // can't reach destination
+		else {
+			cout << "YES" << ln;
+			p32 itr = dest; // from destination
+			while (itr.fi != src.fi || itr.se != src.se) { // to source
+				s += path[itr.fi][itr.se];
+				itr = parent[itr.fi][itr.se];
+			}
+			reverse(all(s));
+			cout << s.size() << ln << s << ln;
+		}
+	}
+};
 
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
-	}
+	int n, m; cin >> n >> m;
+	grid g(n, m);
+	g.fillgrid();
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.shortest_path();
 }
 
 signed main() {

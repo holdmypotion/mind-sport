@@ -58,45 +58,57 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+struct graph {
+	ll n, m;
+	vvp64 adj;
+	v64 cnt;
+	graph() = default;
+	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
+		cnt.resize(n + 1, 0);
+	};
+
+	void addEdge(ll u, ll v, ll w) {
+		adj[u].pb({ v, w });
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void dikjstra(ll s, ll k) {
+		priority_queue<pair<ll, ll>> q;
+		q.push({ 0, s });
+		while (!q.empty() && cnt[n] < k) {
+			ll a = q.top().se;
+			ll d = q.top().fi;
+			q.pop();
+			cnt[a]++;
+			if (a == n) cout << -d << " ";
+			if (cnt[a] <= k) {
+				for (auto& v : adj[a]) {
+					ll b = v.fi, w = v.se;
+					q.push({ d - w, b });
+					// * 1.......m.......n
+					// * <---|d|--><---|w|--->
+					// * 1-n -> d + w.
+					// * BUT d is -ve hence (-d) - w = -(d+w)
+				}
+			}
+		}
 	}
-}
+};
 
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	// * let the nodes be visited for at max k times (worst case) in dikjstra
+	// * to find k routes
+	ll n, m, k; cin >> n >> m >> k;
+	graph g(n, m);
+	forn(i, m) {
+		ll u, v, w; cin >> u >> v >> w;
+		g.addEdge(u, v, w);
 	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.dikjstra(1, k);
 }
+
 
 signed main() {
 	fast_cin();

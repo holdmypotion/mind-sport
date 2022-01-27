@@ -58,44 +58,86 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
+struct graph {
+	ll n, m;
+	vector<tuple<ll, ll, ll>> edges;
+	v64 dis;
+	vv64 adj1, adj2;
+	vb vis1, vis2;
+	graph() = default;
+	graph(ll n) : n(n) {
+		adj1.resize(n + 1);
+		vis1.resize(n + 1, false);
+		adj2.resize(n + 1);
+		vis2.resize(n + 1, false);
+		dis.resize(n + 1, -INF);
+	};
+	graph(ll n, ll m) : n(n), m(m) {
+		adj1.resize(n + 1);
+		vis1.resize(n + 1, false);
+		adj2.resize(n + 1);
+		vis2.resize(n + 1, false);
+		dis.resize(n + 1, -INF);
+	};
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	void addEdge(ll u, ll v, ll w) {
+		edges.pb({ u, v, w });
+		adj1[u].pb(v); // adjacency list
+		adj2[v].pb(u); // reverse adjacency list
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	// dfs on adj1
+	void dfs1(ll u) {
+		vis1[u] = true;
+		for (auto& v : adj1[u]) {
+			if (!vis1[v]) dfs1(v);
+		}
 	}
-}
 
+	// dfs on adj2 (reverse adj)
+	void dfs2(ll u) {
+		vis2[u] = true;
+		for (auto& v : adj2[u]) {
+			if (!vis2[v]) dfs2(v);
+		}
+	}
+
+	void pathWithMaxScore(ll s) {
+		dfs1(s); dfs2(n);
+		dis[s] = 0;
+		forn(i, n) {
+			for (auto& [u, v, w] : edges) {
+				if (dis[v] < dis[u] + w) {
+					dis[v] = dis[u] + w;
+					// last round but still increase in dis -> +ve sum cycle
+					// && vis1[v] && vis2[v] == true -> there exists a path like 1..v..n
+					if (i == n - 1 && vis1[v] && vis2[v]) { cout << -1; return; }
+				}
+			}
+		}
+		cout << dis[n];
+
+	}
+
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	// ? Solution
+	/**
+	 * Run dfs1 from source and dfs2 from destination.
+	 * mark vis1 for dfs1 and vis2 for dfs2
+	 * if there exists a +ve sum cycle (can be easily found in bellman-ford)
+	 * and the vis1 && vis2 is true for that node. We have infinite as the ans hence, print -1
+	 * otherwise print dis[n];
+	 */
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+	forn(i, m) {
+		ll u, v, w; cin >> u >> v >> w;
+		g.addEdge(u, v, w);
 	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.pathWithMaxScore(1);
 }
 
 signed main() {

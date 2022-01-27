@@ -58,44 +58,82 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
 
-	tree() = default;
-	tree(ll n) : n(n) {
+struct grid {
+	int n, m;
+	p32 src;
+	vector<string> adj;
+	queue<p32> q;
+	vv32 nex;
+
+	int dr[4] = { 0, 0, 1, -1 };
+	int dc[4] = { 1, -1, 0, 0 };
+	string ds = "RLDU";
+
+	grid() = default;
+	grid(int n, int m) : n(n), m(m) {
 		adj.resize(n);
+		nex.resize(n + 1, v32(m + 1, 0));
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
+	//! Customize according to question
+	void fillgrid() {
+		for (auto& ele : adj) cin >> ele;
 
+		forn(i, n) {
+			forn(j, m) {
+				if (adj[i][j] == 'M') q.push({ i, j });
+				else if (adj[i][j] == 'A') src = { i, j };
+			}
+		}
+		q.push(src);
+	}
+
+	bool isValid(int x, int y) {
+		bool possible = (x < n&& x >= 0 && y < m&& y >= 0);
+		if (!possible || adj[x][y] != '.') return false;
+		return true;
+	}
+
+	void escapeRoute() {
+		nex[src.fi][src.se] = -1;
+		while (!q.empty()) {
+			auto [x, y] = q.front(); q.pop();
+			if (adj[x][y] == 'A' && (x == 0 || x == n - 1 || y == 0 || y == m - 1)) {
+				cout << "YES" << ln;
+				string ans;
+				int d = nex[x][y];
+				while (d != -1) {
+					ans += ds[d];
+					x -= dr[d];
+					y -= dc[d];
+					d = nex[x][y];
+				}
+				reverse(all(ans));
+				cout << ans.size() << ln << ans;
+				return;
+			}
+
+			forn(i, 4) {
+				int nx = x + dr[i], ny = y + dc[i];
+				if (isValid(nx, ny)) {
+					adj[nx][ny] = adj[x][y];
+					// cout << nx << " " << ny << ": " << i << ln;
+					if (adj[nx][ny] == 'A') nex[nx][ny] = i;
+					q.push({ nx, ny });
+				}
+			}
+		}
+		cout << "NO";
+	}
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
-	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	ll n, m; cin >> n >> m;
+	grid g(n, m);
+	g.fillgrid();
+	g.escapeRoute();
 }
 
 signed main() {

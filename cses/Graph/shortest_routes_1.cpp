@@ -58,44 +58,62 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
+struct graph {
+	ll n, m;
+	vvp64 adj;
+	vector<bool> processed;
+	v64 dis;
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	graph() = default;
+	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
+		processed.resize(n + 1, false);
+		dis.resize(n + 1, INF);
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void addedge(ll u, ll v, ll w) {
+		// {distance, node}
+		adj[u].pb({ w, v });
 	}
-}
 
+	void dikjstra(ll s) {
+		priority_queue<pair<ll, ll>> q;
+		dis[s] = 0LL;
+		// {distance, node}
+		q.push({ 0LL, s });
+		while (!q.empty()) {
+			auto u = q.top().se; q.pop();
+			if (processed[u]) continue;
+			processed[u] = true;
+
+			for (auto& v : adj[u]) {
+				ll b = v.se, w = v.fi;
+				dis[b] = min(dis[b], dis[u] + w);
+				q.push({ -dis[b], b });
+			}
+		}
+	}
+
+	void shortest_routes() {
+		for (auto& ele : dis) {
+			if (ele != INF) cout << ele << " ";
+		}
+	}
+
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+
+	forn(i, m) {
+		ll u, v, w; cin >> u >> v >> w;
+		g.addedge(u, v, w);
 	}
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.dikjstra(1);
+	g.shortest_routes();
 }
 
 signed main() {

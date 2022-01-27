@@ -58,50 +58,74 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
+struct graph {
+	ll n, m;
 	vv64 adj;
+	vb vis;
+	v64 group;
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	graph() = default;
+	graph(ll n) : n(n) {
+		adj.resize(n + 1);
+		vis.resize(n + 1, false);
+		group.resize(n + 1, 0);
+	}
+	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
+		vis.resize(n + 1, false);
+		group.resize(n + 1);
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void addedge(ll a, ll b) {
+		adj[a].pb(b);
 	}
-}
 
+	bool bfs(ll u) {
+		queue<ll> q;
+		q.push(u);
+		vis[u] = true;
+		if (group[u] == 0) group[u] = 1;
+		while (!q.empty()) {
+			auto s = q.front();q.pop();
+			for (auto& v : adj[s]) {
+				if (group[v] == group[s]) return false;
+				if (!vis[v]) {
+					group[v] = (group[s] == 1 ? 2 : 1);
+					vis[v] = true;
+					q.push(v);
+				}
+			}
+		}
+		return true;
+	}
+
+	void groupthem() {
+		forsn(i, 1, n + 1) {
+			if (!bfs(i)) {
+				cout << "IMPOSSIBLE";
+				return;
+			}
+		}
+		forsn(i, 1, n + 1) cout << group[i] << " ";
+	}
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+	forn(i, m) {
+		int a, b; cin >> a >> b;
+		g.addedge(a, b);
+		g.addedge(b, a);
 	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.groupthem();
 }
 
 signed main() {
 	fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
+	freopen("test_input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;

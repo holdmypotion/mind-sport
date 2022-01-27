@@ -14,27 +14,27 @@ struct graph {
 	vv64 adj, dis;
 	graph() = default;
 	graph(ll n) : n(n) {
-		adj.resize(n + 1, v64(n + 1));
+		adj.resize(n + 1, v64(n + 1, INF));
 		dis.resize(n + 1, v64(n + 1));
 	};
 	graph(ll n, ll m) : n(n), m(m) {
-		adj.resize(n + 1, v64(n + 1));
+		adj.resize(n + 1, v64(n + 1, INF));
 		dis.resize(n + 1, v64(n + 1));
 	};
 
 	void init() {
 		for (ll i = 1; i <= n; i++) {
 			for (ll j = 1; j <= n; j++) {
-				if (i == j) dis[i][j] = 0;
-				else if (adj[i][j]) dis[i][j] = adj[i][j];
-				else dis[i][j] = INF;
+				if (i == j) dis[i][j] = 0; // same node
+				else if (adj[i][j]) dis[i][j] = adj[i][j]; // direct nodes
+				else dis[i][j] = INF; // indirect nodes
 			}
 		}
 	}
 
 	void addEdge(ll u, ll v, ll w) {
-		adj[u][v] = w;
-		adj[v][u] = w;
+		adj[u][v] = min(adj[u][v], w);
+		adj[v][u] = min(adj[v][u], w);
 	}
 
 	void floydWarshall() {

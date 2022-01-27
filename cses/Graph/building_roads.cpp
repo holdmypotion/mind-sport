@@ -58,44 +58,61 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
+constexpr ll mxn = 1000;
+
+struct graph {
+	ll n, m;
 	vv64 adj;
+	vector<bool> vis;
+	graph() = default;
+	graph(ll n) : n(n) {
+		adj.resize(n + 1);
+		vis.resize(n + 1, false);
+	};
+	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
+		vis.resize(n + 1, false);
+	};
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	void addEdge(ll a, ll b) {
+		adj[a].pb(b);
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	ll dfs(ll u) {
+		vis[u] = true;
+		for (auto& v : adj[u]) {
+			if (!vis[v]) dfs(v);
+		}
+		return u;
 	}
-}
 
+	void countConnectedComponents() {
+		v64 repCities;
+		forsn(i, 1, n + 1) {
+			if (!vis[i]) {
+				ll rep = dfs(i);
+				repCities.pb(rep);
+			}
+		}
+		ll count = repCities.size() - 1;
+		cout << count << ln;
+		forn(i, count) {
+			cout << repCities[i] << " " << repCities[i + 1] << ln;
+		}
+	}
+
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+	forn(i, m) {
+		int a, b; cin >> a >> b;
+		g.addEdge(a, b);
+		g.addEdge(b, a);
 	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.countConnectedComponents();
 }
 
 signed main() {

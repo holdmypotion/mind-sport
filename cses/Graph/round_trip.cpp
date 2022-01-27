@@ -58,50 +58,88 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
+enum Color { WHITE, GRAY, BLACK };
+
+struct graph {
+	ll n, m, cycleTill;
 	vv64 adj;
+	v64 color, par;
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	graph() = default;
+	graph(ll n) : n(n) {
+		cycleTill = 0;
+		adj.resize(n + 1);
+		color.resize(n + 1, WHITE);
+		par.resize(n + 1, 0);
+	}
+	graph(ll n, ll m) : n(n), m(m) {
+		cycleTill = 0;
+		adj.resize(n + 1);
+		color.resize(n + 1, WHITE);
+		par.resize(n + 1, 0);
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void addedge(ll a, ll b) {
+		adj[a].pb(b);
 	}
-}
 
+	void dfs(ll u, ll p) {
+		if (color[u] == BLACK) return;
+		color[u] = GRAY;
+		for (auto& v : adj[u]) {
+			if (cycleTill != 0) return;
+			if (v != p) {
+				par[v] = u;
+				if (color[v] == GRAY) {
+					cycleTill = v;
+
+				}
+				else if (color[v] == WHITE) {
+					dfs(v, u);
+				}
+			}
+		}
+		color[u] = BLACK;
+	}
+
+	void getRoundTrip() {
+		forsn(i, 1, n + 1) {
+			if (color[i] == WHITE) dfs(i, 0);
+		}
+		if (cycleTill == 0) {
+			cout << "IMPOSSIBLE";
+			return;
+		}
+		v64 cycle;
+		cycle.pb(cycleTill);
+		ll ptr = par[cycleTill];
+		cycle.pb(ptr);
+		while (ptr != cycleTill) {
+			ptr = par[ptr];
+			cycle.pb(ptr);
+		}
+
+		cout << cycle.size() << ln;
+		for (auto& ele : cycle) cout << ele << " ";
+	}
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+	forn(i, m) {
+		int a, b; cin >> a >> b;
+		g.addedge(a, b);
+		g.addedge(b, a);
 	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.getRoundTrip();
 }
 
 signed main() {
 	fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
+	freopen("test_input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;

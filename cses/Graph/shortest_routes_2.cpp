@@ -58,44 +58,60 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
+struct graph {
+	ll n, m;
+	vv64 adj, dis;
+	graph() = default;
+	graph(ll n) : n(n) {
+		adj.resize(n + 1, v64(n + 1, INF));
+		dis.resize(n + 1, v64(n + 1));
+	};
+	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1, v64(n + 1, INF));
+		dis.resize(n + 1, v64(n + 1));
+	};
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	void init() {
+		for (ll i = 1; i <= n; i++) {
+			for (ll j = 1; j <= n; j++) {
+				if (i == j) dis[i][j] = 0; // same node
+				else if (adj[i][j]) dis[i][j] = adj[i][j]; // direct nodes
+				else dis[i][j] = INF; // indirect nodes
+			}
+		}
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void addEdge(ll u, ll v, ll w) {
+		adj[u][v] = min(adj[u][v], w);
+		adj[v][u] = min(adj[v][u], w);
 	}
-}
 
+	void floydWarshall() {
+		init();
+		for (ll k = 1; k <= n; k++) {
+			for (ll i = 1; i <= n; i++) {
+				for (ll j = 1; j <= n; j++) {
+					dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
+				}
+			}
+		}
+	}
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	ll n, m, q; cin >> n >> m >> q;
+	graph g(n, m);
+	forn(i, m) {
+		ll u, v, w; cin >> u >> v >> w;
+		g.addEdge(u, v, w);
 	}
-
-	int q; cin >> q;
+	g.floydWarshall();
 	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
+		ll i, j; cin >> i >> j;
 
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
+		cout << (g.dis[i][j] == INF ? -1 : g.dis[i][j]) << ln;
 	}
-
-
-
 }
 
 signed main() {

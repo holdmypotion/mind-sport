@@ -1,107 +1,99 @@
-// author: holdmypotion
-#pragma GCC optimize("Ofast")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
-#pragma GCC optimize("unroll-loops")
-#include <bits/stdc++.h>  
-#include <complex>
-#include <queue>
-#include <set>
-#include <unordered_set>
-#include <list>
-#include <chrono>
-#include <random>
-#include <iostream>
-#include <algorithm>
-#include <cmath>
-#include <string>
-#include <vector>
-#include <map>
-#include <unordered_map>
-#include <stack>
-#include <iomanip>
-#include <fstream>
-
+#include <bits/stdc++.h>
 using namespace std;
+#define int long long 
 
-typedef long long ll;
-typedef long double ld;
-typedef pair<int, int> p32;
-typedef pair<ll, ll> p64;
-typedef tuple<ll, ll, ll> t64;
-typedef pair<double, double> pdd;
-typedef vector<ll> v64;
-typedef vector<int> v32;
-typedef vector<bool> vb;
-typedef vector<vector<int> > vv32;
-typedef vector<vector<ll> > vv64;
-typedef vector<vector<p64> > vvp64;
-typedef vector<vector<bool>> vvb;
-typedef vector<p64> vp64;
-typedef vector<t64> vt64;
-typedef vector<p32> vp32;
-ll MOD = 998244353;
-double eps = 1e-12;
-#define forn(i,e) for(ll i = 0; i < e; i++)
-#define forsn(i,s,e) for(ll i = s; i < e; i++)
-#define rforn(i,s) for(ll i = s; i >= 0; i--)
-#define rforsn(i,s,e) for(ll i = s; i >= e; i--)
-#define ln "\n"
-#define dbg(x) cout<<#x<<" = "<<x<<ln
-#define mp make_pair
-#define pb push_back
-#define fi first
-#define se second
-#define INF 2e18
-#define fast_cin() ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
-#define all(x) (x).begin(), (x).end()
-#define sz(x) ((ll)(x).size())
+#define endl "\n"
 
-int minimum_coins(v32& coins, int n, int x) {
-	v64 dp(x + 1, INF);
-	dp[0] = 0;
-	/**
-	 * 0-> 0
-	 * 1-> 1
-	 * 2-> 2
-	 * 3 -> 3
-	 * 4 -> 4
-	 * 5 -> 1
-	 * ..
-	 * 11 -> 33
-	 */
-	forn(i, x + 1) {
-		// coins -> [1 5 7]
-		for (int j = 0; j < n; j++) {
-			if (i >= coins[j]) {
-				dp[i] = min(dp[i], dp[i - coins[j]] + 1);
-			}
+int N, Q, LIMIT = 20;
+vector<int> sum;
+vector<int> arr;
+vector<int> dist;
+vector<int> depth;
+vector<int> weight;
+vector<vector<pair<int, int>>> tree;
+vector<vector<int>> table;
+
+void dfs(int src, int parent, int level = 1) {
+	sum[src] = sum[parent] + arr[src]; // Sum of arr[i] from root to i.
+	depth[src] = level;
+	table[src][0] = parent;
+	for (int i = 1; i <= LIMIT; i++) {
+		if (table[src][i - 1] == -1)
+			break;
+		table[src][i] = table[table[src][i - 1]][i - 1];
+	}
+	for (auto child : tree[src]) {
+		int idx = child.first, wt = child.second;
+		if (idx == parent) continue;
+		dist[idx] = dist[src] + wt;
+		weight[idx] = weight[src] + (dist[idx] * arr[idx]); // sum of arr[i] * dist(root, i) from root to i.
+		dfs(idx, src, level + 1);
+	}
+}
+
+int getLCA(int x, int y) {
+	if (depth[x] < depth[y]) {
+		swap(x, y);
+	}
+	for (int j = LIMIT; j >= 0; j--) {
+		if ((depth[x] - (1 << j)) >= depth[y]) {
+			x = table[x][j];
 		}
 	}
-	return (dp[x] == INF ? -1 : dp[x]);
-}
-
-// solution
-void potion() {
-	// state -> dp[i] -> min num of coins required to make i
-	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
-
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
+	if (x == y) return x;
+	for (int j = LIMIT; j >= 0; j--) {
+		if (table[x][j] != table[y][j]) {
+			x = table[x][j];
+			y = table[y][j];
+		}
 	}
-
-	cout << minimum_coins(coins, n, x);
+	return table[x][0];
 }
 
-signed main() {
-	fast_cin();
+void solve() {
+	dfs(1, 0);
+	while (Q--) {
+		int x, y;
+		cin >> x >> y;
+		int lca = getLCA(x, y);
+		int contribLCA = (dist[x] - dist[y]) * arr[lca];
+		int ans1 = (sum[x] - sum[lca]) * (dist[x] - dist[y] + 2 * dist[lca]) - 2 * (weight[x] - weight[lca]);
+		int ans2 = (sum[y] - sum[lca]) * (dist[x] - dist[y] - 2 * dist[lca]) + 2 * (weight[y] - weight[lca]);
+		int ans = ans1 + ans2 + contribLCA;
+		cout << ans << endl;
+	}
+}
+
+int32_t main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
 #ifndef ONLINE_JUDGE
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
-} // Alright then, mate
+
+	int T; cin >> T;
+	while (T--) {
+		cin >> N >> Q;
+		tree.resize(N + 1);
+		arr.assign(N + 1, 0LL);
+		depth.assign(N + 1, 0LL);
+		sum.assign(N + 1, 0LL);
+		dist.assign(N + 1, 0LL);
+		weight.assign(N + 1, 0LL);
+		table.assign(N + 1, vector<int>(21, 0));
+
+		for (int i = 1; i <= N; i++) cin >> arr[i];
+		for (int i = 1; i < N; i++) {
+			int u, v, w;
+			cin >> u >> v >> w;
+			tree[u].push_back({ v, w });
+			tree[v].push_back({ u, w });
+		}
+		solve();
+		tree.clear();
+		table.clear();
+	}
+}

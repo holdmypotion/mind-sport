@@ -1,20 +1,19 @@
-constexpr ll mxn = 1000;
-
 struct graph {
 	ll n, m;
-	v64 adj[mxn];
+	vv64 adj;
 	vector<bool> vis;
 	graph() = default;
 	graph(ll n) : n(n) {
+		adj.resize(n + 1);
 		vis.resize(n + 1, false);
 	};
 	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
 		vis.resize(n + 1, false);
 	};
 
 	void addEdge(ll a, ll b) {
-		adj[a].push_back(b);
-		adj[b].push_back(a);
+		adj[a].pb(b);
 	}
 
 	void dfs(ll u) {
@@ -24,9 +23,9 @@ struct graph {
 		}
 	}
 
-	ll countConnectedComponents() {
+	void countConnectedComponents() {
 		ll count = 0;
-		forn(i, n) {
+		forsn(i, 1, n + 1) {
 			if (!vis[i]) {
 				count++;
 				dfs(i);
@@ -44,7 +43,7 @@ void potion() {
 	forn(i, m) {
 		int a, b; cin >> a >> b;
 		g.addEdge(a, b);
+		g.addEdge(b, a);
 	}
-	// g.dfs(0);
 	cout << g.countConnectedComponents();
 }

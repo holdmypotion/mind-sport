@@ -60,9 +60,22 @@ int minimum_coins(v32& coins, int n, int x) {
 	v64 dp(x + 1, INF);
 	dp[0] = 0;
 	/**
-	 * 0-> 0
-	 * 1-> 1
-	 * 2->
+	 * target: 11
+	 * num of coins: 3 -> {1, 5, 7}
+	 * solution: min num of coins needed to make target.
+	 *
+	 * * Approach:
+	 * ? Start from 0 reach target!
+	 * 0-> 0 coins needed
+	 * 1-> 1 coins needed
+	 * 2-> 2 coins needed
+	 * 4-> 4 coins needed
+	 * 5-> 1 coins needed
+	 * 6-> 2 coins needed
+	 * min(3, dp[11 - 5] + 1)
+	 * 11 -> 1: 1+ (dp[11-1])-> dp[10] -> 2 = 3
+	 * 			 5: 1+ (dp[11-5])-> dp[6] -> 2 = 3
+	 *       7: 1+ (dp[11-7])-> dp[4] -> 4 = 5
 	 */
 	forn(i, x + 1) {
 		for (int j = 0; j < n && i >= coins[j]; j++) {

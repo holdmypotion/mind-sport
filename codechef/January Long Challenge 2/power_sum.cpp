@@ -58,44 +58,35 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
-
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
-	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
-
+constexpr int mxn = 1e5;
+// solution
 void potion() {
 	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
-	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
+	v32 arr(n + 1);
+	int sum = 0, min_index = 1, minim = INT_MAX;;
+	for (int i = 1; i <= n; i++) {
+		cin >> arr[i];
+		sum += arr[i];
+		if (minim > arr[i]) {
+			minim = arr[i];
+			min_index = i;
 		}
 	}
 
+	if ((sum & (sum - 1)) == 0) { cout << 0 << ln; return; }
 
+	// target -> what we would like the sum to be
+	int bits = (int)log2(sum) + 1;
+	int target = (1 << bits);
 
+	// needed -> what we need to add to sum to make it target
+	int needed = target - (sum - minim);
+
+	// we are claiming that (target - sum) is a multiple of minim;
+	// i.e. (target-sum) | M;
+	int mul = needed / minim;
+	cout << 1 << ln;
+	cout << 1 << " " << mul << ln << min_index << ln;
 }
 
 signed main() {
@@ -105,7 +96,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!

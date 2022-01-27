@@ -3,9 +3,6 @@ struct graph {
 	vector<tuple<ll, ll, ll>> edges;
 	v64 dis;
 	graph() = default;
-	graph(ll n) : n(n) {
-		dis.resize(n + 1, INF);
-	};
 	graph(ll n, ll m) : n(n), m(m) {
 		dis.resize(n + 1, INF);
 	};
@@ -16,22 +13,36 @@ struct graph {
 
 	bool shortestPath(ll s) {
 		dis[s] = 0;
+		par[s] = 0;
+		ll till;
 		forn(i, n) {
+			till = 0;
 			for (auto& [u, v, w] : edges) {
-				dis[v] = min(dis[v], dis[u] + w);
+				if (dis[v] > dis[u] + w) {
+					dis[v] = dis[u] + w;
+					par[v] = u;
+					till = v;
+				}
 			}
 		}
 
-		for (auto& [u, v, w] : edges) {
-			if (dis[u] != INF && dis[u] + w < dis[v]) {
-				cout << "Graph contains -ve cycle";
-				return false;
-			}
+		if (till) {
+			//! To Print negative cycle.
+			// v64 cycle;
+			// forn(i, n) till = par[till];
+			// ll node;
+			// for (int node = till;; node = par[node]) {
+			// 	cycle.pb(node);
+			// 	if (node == till && cycle.size() > 1) break;
+			// }
+
+			// reverse(all(cycle));
+			// for (auto& ele : cycle) cout << ele << " ";
 		}
+		else return false;
 
 		return true;
 	}
-
 };
 
 // solution
@@ -44,9 +55,8 @@ void potion() {
 	}
 
 	if (g.shortestPath(1)) {
-
-		for (auto& u : g.dis) {
-			if (u != INF) cout << u << " ";
+		forsn(i, 1, n + 1) {
+			cout << i << ": " << dis[i];
 		}
 	}
 }

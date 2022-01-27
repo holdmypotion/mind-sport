@@ -58,79 +58,92 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-enum COLOR { WHITE, GRAY, BLACK };
-
 struct graph {
-	ll n, m;
-	vv64 adj;
-	vector<set<ll>> reach;
-	v64 color, backedge;
+	ll n, m, timer;
+	vvp64 adj;
+	vv64 dp;
+	v64 in, out, sum, weight, dist, arr;
 	graph() = default;
-	graph(ll n, ll m) : n(n), m(m) {
+	graph(ll n) : n(n) {
+		timer = 0;
 		adj.resize(n + 1);
-		reach.resize(n + 1);
-		color.resize(n + 1, WHITE);
-		backedge.resize(n + 1, 0);
-	};
-
-	void addEdge(ll u, ll v) {
-		adj[u].push_back(v);
-		reach[u].insert(v);
+		dp.resize(n + 1, v64(21, 0));
+		in.resize(n + 1);
+		out.resize(n + 1);
+		sum.resize(n + 1, 0);
+		dist.resize(n + 1, 0);
+		weight.resize(n + 1, 0);
+		arr.resize(n + 1, 0);
 	}
 
-	set<ll> dfs(ll u) {
-		color[u] = GRAY;
-		reach[u].insert(u);
+	void addEdge(ll u, ll v, ll w) {
+		adj[u].pb({ v, w });
+	}
+
+	void dfs(ll u, ll p) {
+		sum[u] = sum[p] + arr[u];
+		dp[u][0] = p;
+		in[u] = timer++;
+		for (int i = 1; i <= 20; i++) {
+			dp[u][i] = dp[dp[u][i - 1]][i - 1];
+		}
 		for (auto& v : adj[u]) {
-			if (color[v] == GRAY) {
-				backedge[u] = (backedge[u] == 0 ? v : min(backedge[u], v));
-				continue;
-			}
-			auto s = reach[v];
-			if (color[v] == WHITE) s = dfs(v);
-
-			if (s.size() > reach[u].size()) {
-				swap(s, reach[u]);
-			}
-			// cout << v << ": ";
-			for (auto& ele : s) {
-				// cout << ele << ln;
-				reach[u].insert(ele);
+			int a = v.fi, wt = v.se;
+			if (a != p) {
+				dist[a] = dist[u] + wt;
+				weight[a] = weight[u] + (dist[a] * arr[a]);
+				dfs(a, u);
 			}
 		}
-		color[u] = BLACK;
-		return reach[u];
+		out[u] = timer++;
 	}
 
+	bool is_ancestor(ll u, ll v) {
+		// u is_ancestor of v;
+		return in[u] <= in[v] and out[u] >= out[v];
+	}
 
-	void topologicalOrder() {
-		forsn(i, 1, n + 1) {
-			if (color[i] == WHITE) dfs(i);
-		}
-		forsn(i, 1, n + 1) {
-			if (backedge[i] != 0) {
-				reach[i] = reach[backedge[i]];
+	ll lca(ll u, ll v) {
+		if (is_ancestor(u, v)) return u;
+		if (is_ancestor(v, u)) return v;
+		for (ll i = 20; ~i; i--) {
+			// cout << ~i << ln;
+			if (!is_ancestor(dp[u][i], v)) {
+				u = dp[u][i];
 			}
 		}
-		forsn(i, 1, n + 1) cout << reach[i].size() << " ";
-		// forsn(i, 1, n + 1) {
-		// 	cout << i << ": ";
-		// 	for (auto& ele : reach[i]) cout << ele << " ";
-		// 	cout << ln;
-		// }
+		// u = not is_ancestor of v;
+		return dp[u][0]; // parent of u is lca
 	}
+
+	ll calculate_dist(ll x, ll y) {
+		int k = lca(x, y);
+		int node_is_lca = (dist[x] - dist[y]) * arr[k];
+		int ans1 = (sum[x] - sum[k]) * (dist[x] - dist[y] + 2 * dist[k]) - 2 * (weight[x] - weight[k]);
+		int ans2 = (sum[y] - sum[k]) * (dist[x] - dist[y] - 2 * dist[k]) + 2 * (weight[y] - weight[k]);
+		int ans = ans1 + ans2 + node_is_lca;
+		return ans;
+	}
+
 };
-
 // solution
 void potion() {
-	ll n, m; cin >> n >> m;
-	graph g(n, m);
-	forn(i, m) {
-		ll u, v; cin >> u >> v;
-		g.addEdge(u, v);
+	ll n, q; cin >> n >> q;
+	graph g(n);
+	forsn(i, 1, n + 1) cin >> g.arr[i];
+	forsn(i, 1, n) {
+		// we are getting parents for each node
+		int u, v, w; cin >> u >> v >> w;
+		g.addEdge(u, v, w);
+		g.addEdge(v, u, w);
 	}
+	g.dfs(1, 1);
 
-	g.topologicalOrder();
+	while (q--) {
+		ll u, k; cin >> u >> k;
+		ll ans = g.calculate_dist(u, k);
+		cout << ans << endl;
+	}
 }
 
 signed main() {
@@ -140,7 +153,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!

@@ -58,44 +58,80 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
+constexpr ll mxn = 1000;
+
+struct graph {
+	ll n, m;
 	vv64 adj;
+	vector<bool> vis;
+	v64 par, dis;
+	graph() = default;
+	graph(ll n) : n(n) {
+		adj.resize(n + 1);
+		vis.resize(n + 1, false);
+		par.resize(n + 1);
+		dis.resize(n + 1, 0);
+	};
+	graph(ll n, ll m) : n(n), m(m) {
+		adj.resize(n + 1);
+		vis.resize(n + 1, false);
+		par.resize(n + 1);
+		dis.resize(n + 1, 0);
+	};
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	void addEdge(ll a, ll b) {
+		adj[a].pb(b);
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
+	void bfs(int u) {
+		queue<ll> q;
+		vis[u] = true;
+		q.push(u);
+		par[u] = 0;
+		dis[u] = 0;
+		while (!q.empty()) {
+			auto s = q.front(); q.pop();
+			if (s == n) return;
+			for (auto& v : adj[s]) {
+				if (!vis[v]) {
+					dis[v] = dis[s] + 1;
+					par[v] = s;
+					vis[v] = true;
+					q.push(v);
+				}
+			}
+		}
 	}
-}
 
+	void shortest_path() {
+		bfs(1);
+		if (!vis[n]) cout << "IMPOSSIBLE";
+		else {
+			v64 res;
+			cout << dis[n] + 1 << ln;
+			auto src = n;
+			res.pb(n);
+			while (src != 1) {
+				src = par[src];
+				res.pb(src);
+			}
+
+			reverse(all(res));
+			for (auto& ele : res) cout << ele << " ";
+		}
+	}
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+	forn(i, m) {
+		int a, b; cin >> a >> b;
+		g.addEdge(a, b);
+		g.addEdge(b, a);
 	}
-
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.shortest_path();
 }
 
 signed main() {

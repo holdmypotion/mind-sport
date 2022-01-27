@@ -58,44 +58,29 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
-
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
-	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
-
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
-	}
+	int n, d, i = 1; cin >> n >> d;
+	ll ans = 1;
+	if (d == 0) { cout << ans << ln; return; }
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
+	const int twice = 2, tripple = 3;
+	while (i <= d) {
+		if (i <= 10) {
+			(ans *= twice) %= mod;
 		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
+		else {
+			(ans *= tripple) %= mod;
 		}
+		if (ans >= n) {
+			cout << n << ln; return;
+		}
+		i++;
 	}
+	if (ans <= n) {
 
-
-
+		cout << ans << ln;
+	}
 }
 
 signed main() {
@@ -105,7 +90,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!

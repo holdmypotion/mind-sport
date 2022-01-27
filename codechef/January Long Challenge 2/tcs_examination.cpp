@@ -58,44 +58,23 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
-
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
-	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
-
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	v32 drag(3), sloth(3);
+	int drag_sum = 0, sloth_sum = 0;
+	forn(i, 3) { cin >> drag[i]; drag_sum += drag[i]; }
+	forn(i, 3) { cin >> sloth[i]; sloth_sum += sloth[i]; }
+
+	if (drag_sum > sloth_sum) { cout << "DRAGON" << ln; return; }
+	else if (drag_sum < sloth_sum) { cout << "SLOTH" << ln; return; }
+	forn(i, 3) {
+		if (drag[i] > sloth[i]) { cout << "DRAGON" << ln; return; }
+		else if (drag[i] < sloth[i]) { cout << "SLOTH" << ln; return; }
+		else continue;
 	}
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	cout << "TIE" << ln;
+	return;
 }
 
 signed main() {
@@ -105,7 +84,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!

@@ -58,50 +58,77 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
+struct graph {
+	ll n, m;
+	vector<tuple<ll, ll, ll>> edges;
+	v64 dis, par;
+	graph() = default;
+	graph(ll n) : n(n) {
+		dis.resize(n + 1, INF);
+		par.resize(n + 1, -1);
+	};
+	graph(ll n, ll m) : n(n), m(m) {
+		dis.resize(n + 1, INF);
+		par.resize(n + 1, -1);
+	};
 
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+	void addEdge(ll u, ll v, ll w) {
+		edges.pb({ u, v, w });
 	}
 
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
+	bool containsNegativeCycle(ll s) {
+		dis[s] = 0;
+		par[s] = 0;
+		ll till;
+		forn(i, n) {
+			till = 0;
+			for (auto& [u, v, w] : edges) {
+				if (dis[v] > dis[u] + w) {
+					dis[v] = dis[u] + w;
+					par[v] = u;
+					till = v;
+				}
+			}
+		}
 
+		if (till) {
+			cout << "YES" << ln;
+			v64 cycle;
+			forn(i, n) till = par[till];
+			ll node;
+			for (int node = till;; node = par[node]) {
+				cycle.pb(node);
+				if (node == till && cycle.size() > 1) break;
+			}
+
+			reverse(all(cycle));
+			for (auto& ele : cycle) cout << ele << " ";
+		}
+		else {
+			cout << "NO";
+			return false;
+		}
+		return true;
+	}
+
+};
+
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	ll n, m; cin >> n >> m;
+	graph g(n, m);
+	forn(i, m) {
+		ll u, v, w; cin >> u >> v >> w;
+		g.addEdge(u, v, w);
 	}
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
-
+	g.containsNegativeCycle(1);
 }
 
 signed main() {
 	fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
+	freopen("test_input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;

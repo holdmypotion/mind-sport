@@ -58,44 +58,48 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
-
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
-	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
-}
-
+// solution
 void potion() {
+	// RGB -> 0 1 2
+	// 	 0  1  2
+	// 0
+	// 1
+	// 2
 	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	vv32 boxes(3, v32(3));
+	forn(i, 3) {
+		forn(j, 3) cin >> boxes[i][j];
 	}
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
+	int ops = 0;
+	forn(i, 3) {
+		forn(j, 3) {
+			if (i != j) {
+				int value = boxes[i][j];
+				// cout << i << ", " << j << " : " << value << ln;
+				if (value != 0) {
+					ops += value;
+					boxes[j][j] += value;
+					boxes[i][j] -= value;
+					while (value--) {
+						auto replace = boxes[j][i];
+						if (replace > 0) {
+							boxes[i][i]++;
+							boxes[j][i]--;
+						}
+						else {
+							int	k = (j + 1) % 3;
+							(k += (k == i ? 1 : 0)) %= 3;
+							// cout << k << " ";
+							boxes[i][k]++;
+							boxes[j][k]--;
+						}
+					}
+				}
+			}
 		}
 	}
-
-
-
+	cout << ops << ln;
 }
 
 signed main() {
@@ -105,7 +109,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!

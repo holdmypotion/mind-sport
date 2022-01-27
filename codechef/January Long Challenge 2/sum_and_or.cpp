@@ -58,43 +58,35 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 constexpr int mod = 1e9 + 7;
 
-struct tree {
-	ll n;
-	vv64 adj;
-
-	tree() = default;
-	tree(ll n) : n(n) {
-		adj.resize(n);
+bool possible(ll x, ll s, ll cnt) {
+	// sum = a(2^i) + b(2^j) + c(2^k) + ... so on. where i, j, k .. are set bits in x;
+	// bit representation of sum of numbers;
+	// eg: s = 23 and x = 13 -> 1101
+	// s = 2(2^3) + 1(2^2) + 3(2^0) -> 23
+	// Hence min length of the sequence is 3, i.e. the max coeff.
+	ll sum = s - x;
+	cnt--; // as x is already a part of sum 
+	for (int i = 29; i >= 0;i--) {
+		if ((x >> i) & 1) { // if ith bit is set in x
+			ll coeff = min(cnt, sum / (1L << i)); // minimizing the max of coeff;
+			sum -= coeff * (1L << i);
+		}
 	}
-
-	void addedge(ll u, ll v) {
-		adj[u].pb(v);
-		adj[v].pb(u);
-	}
+	return sum == 0;
 }
 
+// solution
 void potion() {
-	int n; cin >> n;
-	tree t(n);
-	forn(i, n - 1) {
-		ll u, v; cin >> u >> v;
-		t.addedge(u, v);
+	int x, s; cin >> x >> s;
+	int l = 1, r = 1e9 + 1;
+	while (l < r) {
+		int m = l + (r - l) / 2;
+		if (possible(x, s, m)) r = m;
+		else l = m + 1;
 	}
 
-	int q; cin >> q;
-	while (q--) {
-		int t; cin >> t;
-		if (t == 1) { // no. of paths
-			int u, v; cin >> u >> v;
-
-		}
-		else if (t == 2) { // flip
-			int u; cin >> u;
-
-		}
-	}
-
-
+	if (r > 1e9) r = -1;
+	cout << r << ln;
 
 }
 
@@ -105,7 +97,7 @@ signed main() {
 	freopen("output.txt", "w", stdout);
 #endif
 	ll t = 1;
-	// cin >> t;
+	cin >> t;
 	while (t--) potion();
 	return 0;
 } // Alright then, mate!
