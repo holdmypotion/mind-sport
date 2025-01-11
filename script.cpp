@@ -1,6 +1,6 @@
 // author: holdmypotion
 #pragma GCC optimize("Ofast")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
 #pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>  
 #include <complex>
@@ -59,101 +59,101 @@ double eps = 1e-12;
 constexpr int mod = 1e9 + 7;
 
 struct graph {
-	ll n, m, timer;
-	vvp64 adj;
-	vv64 dp;
-	v64 in, out, sum, weight, dist, arr;
-	graph() = default;
-	graph(ll n) : n(n) {
-		timer = 0;
-		adj.resize(n + 1);
-		dp.resize(n + 1, v64(21, 0));
-		in.resize(n + 1);
-		out.resize(n + 1);
-		sum.resize(n + 1, 0);
-		dist.resize(n + 1, 0);
-		weight.resize(n + 1, 0);
-		arr.resize(n + 1, 0);
-	}
+  ll n, m, timer;
+  vvp64 adj;
+  vv64 dp;
+  v64 in, out, sum, weight, dist, arr;
+  graph() = default;
+  graph(ll n) : n(n) {
+    timer = 0;
+    adj.resize(n + 1);
+    dp.resize(n + 1, v64(21, 0));
+    in.resize(n + 1);
+    out.resize(n + 1);
+    sum.resize(n + 1, 0);
+    dist.resize(n + 1, 0);
+    weight.resize(n + 1, 0);
+    arr.resize(n + 1, 0);
+  }
 
-	void addEdge(ll u, ll v, ll w) {
-		adj[u].pb({ v, w });
-	}
+  void addEdge(ll u, ll v, ll w) {
+    adj[u].pb({ v, w });
+  }
 
-	void dfs(ll u, ll p) {
-		sum[u] = sum[p] + arr[u];
-		dp[u][0] = p;
-		in[u] = timer++;
-		for (int i = 1; i <= 20; i++) {
-			dp[u][i] = dp[dp[u][i - 1]][i - 1];
-		}
-		for (auto& v : adj[u]) {
-			int a = v.fi, wt = v.se;
-			if (a != p) {
-				dist[a] = dist[u] + wt;
-				weight[a] = weight[u] + (dist[a] * arr[a]);
-				dfs(a, u);
-			}
-		}
-		out[u] = timer++;
-	}
+  void dfs(ll u, ll p) {
+    sum[u] = sum[p] + arr[u];
+    dp[u][0] = p;
+    in[u] = timer++;
+    for (int i = 1; i <= 20; i++) {
+      dp[u][i] = dp[dp[u][i - 1]][i - 1];
+    }
+    for (auto& v : adj[u]) {
+      int a = v.fi, wt = v.se;
+      if (a != p) {
+        dist[a] = dist[u] + wt;
+        weight[a] = weight[u] + (dist[a] * arr[a]);
+        dfs(a, u);
+      }
+    }
+    out[u] = timer++;
+  }
 
-	bool is_ancestor(ll u, ll v) {
-		// u is_ancestor of v;
-		return in[u] <= in[v] and out[u] >= out[v];
-	}
+  bool is_ancestor(ll u, ll v) {
+    // u is_ancestor of v;
+    return in[u] <= in[v] and out[u] >= out[v];
+  }
 
-	ll lca(ll u, ll v) {
-		if (is_ancestor(u, v)) return u;
-		if (is_ancestor(v, u)) return v;
-		for (ll i = 20; ~i; i--) {
-			// cout << ~i << ln;
-			if (!is_ancestor(dp[u][i], v)) {
-				u = dp[u][i];
-			}
-		}
-		// u = not is_ancestor of v;
-		return dp[u][0]; // parent of u is lca
-	}
+  ll lca(ll u, ll v) {
+    if (is_ancestor(u, v)) return u;
+    if (is_ancestor(v, u)) return v;
+    for (ll i = 20; ~i; i--) {
+      // cout << ~i << ln;
+      if (!is_ancestor(dp[u][i], v)) {
+        u = dp[u][i];
+      }
+    }
+    // u = not is_ancestor of v;
+    return dp[u][0]; // parent of u is lca
+  }
 
-	ll calculate_dist(ll x, ll y) {
-		int k = lca(x, y);
-		int node_is_lca = (dist[x] - dist[y]) * arr[k];
-		int ans1 = (sum[x] - sum[k]) * (dist[x] - dist[y] + 2 * dist[k]) - 2 * (weight[x] - weight[k]);
-		int ans2 = (sum[y] - sum[k]) * (dist[x] - dist[y] - 2 * dist[k]) + 2 * (weight[y] - weight[k]);
-		int ans = ans1 + ans2 + node_is_lca;
-		return ans;
-	}
+  ll calculate_dist(ll x, ll y) {
+    int k = lca(x, y);
+    int node_is_lca = (dist[x] - dist[y]) * arr[k];
+    int ans1 = (sum[x] - sum[k]) * (dist[x] - dist[y] + 2 * dist[k]) - 2 * (weight[x] - weight[k]);
+    int ans2 = (sum[y] - sum[k]) * (dist[x] - dist[y] - 2 * dist[k]) + 2 * (weight[y] - weight[k]);
+    int ans = ans1 + ans2 + node_is_lca;
+    return ans;
+  }
 
 };
 // solution
 void potion() {
-	ll n, q; cin >> n >> q;
-	graph g(n);
-	forsn(i, 1, n + 1) cin >> g.arr[i];
-	forsn(i, 1, n) {
-		// we are getting parents for each node
-		int u, v, w; cin >> u >> v >> w;
-		g.addEdge(u, v, w);
-		g.addEdge(v, u, w);
-	}
-	g.dfs(1, 1);
+  ll n, q; cin >> n >> q;
+  graph g(n);
+  forsn(i, 1, n + 1) cin >> g.arr[i];
+  forsn(i, 1, n) {
+    // we are getting parents for each node
+    int u, v, w; cin >> u >> v >> w;
+    g.addEdge(u, v, w);
+    g.addEdge(v, u, w);
+  }
+  g.dfs(1, 1);
 
-	while (q--) {
-		ll u, k; cin >> u >> k;
-		ll ans = g.calculate_dist(u, k);
-		cout << ans << endl;
-	}
+  while (q--) {
+    ll u, k; cin >> u >> k;
+    ll ans = g.calculate_dist(u, k);
+    cout << ans << endl;
+  }
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

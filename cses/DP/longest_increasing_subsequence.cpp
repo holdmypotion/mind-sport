@@ -65,39 +65,39 @@ constexpr int mod = 1e9 + 7;
  *
  */
 
- // solution
+// solution
 void potion() {
-	// state: dp[i] -> longest subsequence starting from ith index
-	int n; cin >> n;
-	v32 dp;
+  // state: dp[i] -> longest subsequence starting from ith index
+  int n; cin >> n;
+  v32 dp;
 
-	for (int i = 0; i < n; i++) {
-		int x; cin >> x;
-		auto it = lower_bound(all(dp), x);
-		// cout << *it << ln;
-		if (it == dp.end()) {
-			dp.pb(x);
-			cout << ln << "if: ";
-			for (auto& ele : dp) cout << ele << " ";
-		}
-		else {
-			*it = x;
-			cout << ln << "else: ";
-			for (auto& ele : dp) cout << ele << " ";
-		}
-	}
-	cout << ln;
-	cout << dp.size();
+  for (int i = 0; i < n; i++) {
+    int x; cin >> x;
+    auto it = lower_bound(all(dp), x);
+    // cout << *it << ln;
+    if (it == dp.end()) {
+      dp.pb(x);
+      cout << ln << "if: ";
+      for (auto& ele : dp) cout << ele << " ";
+    }
+    else {
+      *it = x;
+      cout << ln << "else: ";
+      for (auto& ele : dp) cout << ele << " ";
+    }
+  }
+  cout << ln;
+  cout << dp.size();
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

@@ -60,37 +60,37 @@ constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	int n, d, i = 1; cin >> n >> d;
-	ll ans = 1;
-	if (d == 0) { cout << ans << ln; return; }
+  int n, d, i = 1; cin >> n >> d;
+  ll ans = 1;
+  if (d == 0) { cout << ans << ln; return; }
 
-	const int twice = 2, tripple = 3;
-	while (i <= d) {
-		if (i <= 10) {
-			(ans *= twice) %= mod;
-		}
-		else {
-			(ans *= tripple) %= mod;
-		}
-		if (ans >= n) {
-			cout << n << ln; return;
-		}
-		i++;
-	}
-	if (ans <= n) {
+  const int twice = 2, tripple = 3;
+  while (i <= d) {
+    if (i <= 10) {
+      (ans *= twice) %= mod;
+    }
+    else {
+      (ans *= tripple) %= mod;
+    }
+    if (ans >= n) {
+      cout << n << ln; return;
+    }
+    i++;
+  }
+  if (ans <= n) {
 
-		cout << ans << ln;
-	}
+    cout << ans << ln;
+  }
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

@@ -25,5 +25,8 @@
     "variant": "cpp"
   },
   "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
-  "C_Cpp.errorSquiggles": "Disabled"
+  "C_Cpp.errorSquiggles": "Disabled",
+  "cSpell.words": [
+    "invhash"
+  ]
 }

@@ -76,50 +76,50 @@ constexpr int mod = 1e9 + 7;
 int count = 1, max_count = 1;
 
 void longest_subsequence(int i, int n, vvb& dp) {
-	max_count = max(max_count, ::count);
-	for (int j = i + 1; j < n; j++) {
-		// if jth is multiple of ith 
-		if (dp[i][j]) {
-			::count++;
-			// now check the longet sequence starting from jth element
-			longest_subsequence(j, n, dp);
-		}
-	}
-	// backtrack
-	::count = 1;
+  max_count = max(max_count, ::count);
+  for (int j = i + 1; j < n; j++) {
+    // if jth is multiple of ith 
+    if (dp[i][j]) {
+      ::count++;
+      // now check the longet sequence starting from jth element
+      longest_subsequence(j, n, dp);
+    }
+  }
+  // backtrack
+  ::count = 1;
 }
 
 // solution
 void potion() {
-	int n; cin >> n;
-	vector<vector<bool>> dp(n, vector<bool>(n, 0));
-	vector<int> arr(n);
-	for (auto& ele : arr) cin >> ele;
+  int n; cin >> n;
+  vector<vector<bool>> dp(n, vector<bool>(n, 0));
+  vector<int> arr(n);
+  for (auto& ele : arr) cin >> ele;
 
-	// dp[i][j] = mark all the multiples in sequential order as true
-	for (int i = 0; i < n - 1; i++) {
-		for (int j = i + 1; j < n; j++) {
-			if (arr[i] == 1 || arr[j] >= arr[i] && arr[j] % arr[i] == 0) {
-				dp[i][j] = true;
-			}
-		}
-	}
+  // dp[i][j] = mark all the multiples in sequential order as true
+  for (int i = 0; i < n - 1; i++) {
+    for (int j = i + 1; j < n; j++) {
+      if (arr[i] == 1 || arr[j] >= arr[i] && arr[j] % arr[i] == 0) {
+        dp[i][j] = true;
+      }
+    }
+  }
 
-	// count the longest subsequence starting from the ith element
-	for (int i = 0; i < n - 1; i++) {
-		longest_subsequence(i, n, dp);
-	}
-	cout << max_count << ln;
+  // count the longest subsequence starting from the ith element
+  for (int i = 0; i < n - 1; i++) {
+    longest_subsequence(i, n, dp);
+  }
+  cout << max_count << ln;
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

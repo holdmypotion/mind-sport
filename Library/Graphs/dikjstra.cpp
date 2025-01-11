@@ -17,56 +17,56 @@
 // !       we can directly use the default priority queue
 
 struct graph {
-	ll n, m;
-	vvp64 adj;
-	vector<bool> processed;
-	v64 dis;
-	priority_queue<pair<ll, ll>> q;
-	graph() = default;
-	graph(ll n) : n(n) {
-		adj.resize(n + 1);
-		processed.resize(n + 1, false);
-		dis.resize(n + 1, INF);
-	};
-	graph(ll n, ll m) : n(n), m(m) {
-		adj.resize(n + 1);
-		processed.resize(n + 1, false);
-		dis.resize(n + 1, INF);
-	};
+  ll n, m;
+  vvp64 adj;
+  vector<bool> processed;
+  v64 dis;
+  priority_queue<pair<ll, ll>> q;
+  graph() = default;
+  graph(ll n) : n(n) {
+    adj.resize(n + 1);
+    processed.resize(n + 1, false);
+    dis.resize(n + 1, INF);
+  };
+  graph(ll n, ll m) : n(n), m(m) {
+    adj.resize(n + 1);
+    processed.resize(n + 1, false);
+    dis.resize(n + 1, INF);
+  };
 
-	void addEdge(ll u, ll v, ll w) {
-		adj[u].pb({ v, w });
-		adj[v].pb({ u, w });
-	}
+  void addEdge(ll u, ll v, ll w) {
+    adj[u].pb({ v, w });
+    adj[v].pb({ u, w });
+  }
 
-	void dikjstra(ll s) {
-		dis[s] = 0;
-		q.push({ 0, s });
-		while (!q.empty()) {
-			ll a = q.top().second; q.pop();
-			if (processed[a]) continue;
-			processed[a] = true;
+  void dikjstra(ll s) {
+    dis[s] = 0;
+    q.push({ 0, s });
+    while (!q.empty()) {
+      ll a = q.top().second; q.pop();
+      if (processed[a]) continue;
+      processed[a] = true;
 
-			for (auto& v : adj[a]) {
-				ll b = v.first, w = v.second;
-				dis[b] = min(dis[b], dis[a] + w);
-				q.push({ -dis[b], b });
-			}
-		}
-	}
+      for (auto& v : adj[a]) {
+        ll b = v.first, w = v.second;
+        dis[b] = min(dis[b], dis[a] + w);
+        q.push({ -dis[b], b });
+      }
+    }
+  }
 };
 
 // solution
 void potion() {
-	ll n, m; cin >> n >> m;
-	graph g(n, m);
-	forn(i, m) {
-		ll u, v, w; cin >> u >> v >> w;
-		g.addEdge(u, v, w);
-	}
-	g.dikjstra(1);
+  ll n, m; cin >> n >> m;
+  graph g(n, m);
+  forn(i, m) {
+    ll u, v, w; cin >> u >> v >> w;
+    g.addEdge(u, v, w);
+  }
+  g.dikjstra(1);
 
-	for (auto& u : g.dis) {
-		if (u != INF) cout << u << " ";
-	}
+  for (auto& u : g.dis) {
+    if (u != INF) cout << u << " ";
+  }
 }
