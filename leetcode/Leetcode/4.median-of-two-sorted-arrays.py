@@ -2,7 +2,7 @@
 # @lc app=leetcode id=4 lang=python3
 #
 # [4] Median of Two Sorted Arrays
-#
+# 
 
 # @lc code=start
 class Solution:

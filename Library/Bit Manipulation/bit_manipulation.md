@@ -63,8 +63,8 @@ Hence, 8 is a power of 2
 
 ```c++
 int x = 5328; // 00000000000000000001010011010000
-cout << __builtin_clz(x) << "\n"; // 19
-cout << __builtin_ctz(x) << "\n"; // 4
+cout << __builtin_clz(x) << "\n"; // 19 -> count leading zeros
+cout << __builtin_ctz(x) << "\n"; // 4  -> count tailing zeros
 cout << __builtin_popcount(x) << "\n"; // 5
 cout << __builtin_parity(x) << "\n"; // 1
 ```

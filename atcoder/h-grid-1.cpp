@@ -12,13 +12,13 @@ typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
 typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
-typedef set<int> s32;
-typedef set<ll> s64;
 typedef vector<ll> v64;
 typedef vector<int> v32;
 typedef vector<bool> vb;
+typedef vector<char> vc;
 typedef vector<vector<int> > vv32;
 typedef vector<vector<ll> > vv64;
+typedef vector<vector<char> > vvc;
 typedef vector<vector<p32> > vvp32;
 typedef vector<vector<p64> > vvp64;
 typedef vector<vector<bool>> vvb;
@@ -67,21 +67,20 @@ void pvv(const vector<T>& vv) {
 }
 
 void potion() {
-  ll n; cin >> n;
-  v64 a(n);
-  forn(i, n) cin >> a[i];
+  // dp[i][j]-> num of paths to get to (i,j)
+  ll n, m; cin >> n >> m;
+  vvc g(n, vc(m));
+  forn(i, n) forn(j, m) cin >> g[i][j];
 
-  // Only for cases where all elements are either odd or even we need to look for k > 2;
-  ll k=2;
-  while (k) {
-    s64 c;
-    for (auto& el: a) c.insert(el % k);
-    if (c.size() == 2) {
-      p(k);
-      return;
+  vv64 dp(n+1, v64(m+1, 0));
+  dp[1][1] = 1;
+
+  forsn(i, 1, n+1) {
+    forsn(j, 1, m+1) {
+      if (g[i-1][j-1] == '.') dp[i][j] = max(dp[i][j], (dp[i-1][j] + dp[i][j-1])%mod)%mod;
     }
-    else k*=2;
   }
+  p(dp[n][m]);
 }
 
 signed main() {
@@ -90,8 +89,8 @@ signed main() {
   freopen("/Users/loona-mac/personal/mind-sport/input.txt", "r", stdin);
   // freopen("/Users/loona-mac/personal/mind-sport/output.txt", "w", stdout);
 #endif
-  int t;
-  cin >> t;
+  int t=1;
+  // cin >> t;
   while (t--) potion();
   return 0;
 }

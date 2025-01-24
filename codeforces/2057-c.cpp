@@ -12,8 +12,6 @@ typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
 typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
-typedef set<int> s32;
-typedef set<ll> s64;
 typedef vector<ll> v64;
 typedef vector<int> v32;
 typedef vector<bool> vb;
@@ -67,21 +65,10 @@ void pvv(const vector<T>& vv) {
 }
 
 void potion() {
-  ll n; cin >> n;
-  v64 a(n);
-  forn(i, n) cin >> a[i];
-
-  // Only for cases where all elements are either odd or even we need to look for k > 2;
-  ll k=2;
-  while (k) {
-    s64 c;
-    for (auto& el: a) c.insert(el % k);
-    if (c.size() == 2) {
-      p(k);
-      return;
-    }
-    else k*=2;
-  }
+  int l, r; cin >> l >> r;
+  int mx = (1<<(31-__builtin_clz(l^r))) - 1;
+  int a = l|mx;
+  p(a, a+1, ((a+1)==r ? l : r));
 }
 
 signed main() {
@@ -90,8 +77,7 @@ signed main() {
   freopen("/Users/loona-mac/personal/mind-sport/input.txt", "r", stdin);
   // freopen("/Users/loona-mac/personal/mind-sport/output.txt", "w", stdout);
 #endif
-  int t;
-  cin >> t;
+  int t; cin >> t;
   while (t--) potion();
   return 0;
 }

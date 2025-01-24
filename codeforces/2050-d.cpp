@@ -12,8 +12,6 @@ typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
 typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
-typedef set<int> s32;
-typedef set<ll> s64;
 typedef vector<ll> v64;
 typedef vector<int> v32;
 typedef vector<bool> vb;
@@ -67,21 +65,26 @@ void pvv(const vector<T>& vv) {
 }
 
 void potion() {
-  ll n; cin >> n;
-  v64 a(n);
-  forn(i, n) cin >> a[i];
+  string s; cin >> s;
+  ll n = s.length();
 
-  // Only for cases where all elements are either odd or even we need to look for k > 2;
-  ll k=2;
-  while (k) {
-    s64 c;
-    for (auto& el: a) c.insert(el % k);
-    if (c.size() == 2) {
-      p(k);
-      return;
+  // Only concerned about (i, i+9) digits for each i
+  // Brute force for each i to find the max possibility and swap till you reach i from that element
+  // TC: O(9*n)
+
+  forn(i, n) {
+    ll mx = s[i] - '0', midx = i;
+    forsn(j, i, min(i+10, n)) {
+      ll x = (s[j] - '0') - j + i;
+      if (x > mx) {
+        mx = x; midx = j;
+      }
     }
-    else k*=2;
+    while (midx > i) { swap(s[midx], s[midx-1]); midx--; }
+    s[i] = char(mx + '0');
   }
+
+  p(s);
 }
 
 signed main() {
@@ -90,8 +93,7 @@ signed main() {
   freopen("/Users/loona-mac/personal/mind-sport/input.txt", "r", stdin);
   // freopen("/Users/loona-mac/personal/mind-sport/output.txt", "w", stdout);
 #endif
-  int t;
-  cin >> t;
+  int t; cin >> t;
   while (t--) potion();
   return 0;
 }

@@ -12,8 +12,6 @@ typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
 typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
-typedef set<int> s32;
-typedef set<ll> s64;
 typedef vector<ll> v64;
 typedef vector<int> v32;
 typedef vector<bool> vb;
@@ -50,7 +48,7 @@ double eps = 1e-12;
 constexpr int mod = 1e9 + 7;
 
 template<typename... T>
-void p(T... args) { ((cout << args << " "), ...) << "\n"; }
+void print(T... args) { ((cout << args << " "), ...) << "\n"; }
 
 template <typename T>
 void pv(const vector<T>& vec) {
@@ -66,22 +64,22 @@ void pvv(const vector<T>& vv) {
   }
 }
 
+double dfs(ll i, ll h, ll n, vector<vector<double>>& dp, vector<double>& p) {
+  if (i == n) return (h > n/2) ? 1 : 0;
+
+  if (dp[i][h] != -1) return dp[i][h];
+
+  double w_h = p[i] * dfs(i+1, h+1, n, dp, p);
+  double w_t = (1-p[i]) * dfs(i+1, h, n, dp, p);
+
+  return dp[i][h] = w_h + w_t;
+}
+
 void potion() {
   ll n; cin >> n;
-  v64 a(n);
-  forn(i, n) cin >> a[i];
-
-  // Only for cases where all elements are either odd or even we need to look for k > 2;
-  ll k=2;
-  while (k) {
-    s64 c;
-    for (auto& el: a) c.insert(el % k);
-    if (c.size() == 2) {
-      p(k);
-      return;
-    }
-    else k*=2;
-  }
+  vector<double> p(n); forn(i, n) cin >> p[i];
+  vector<vector<double>> dp(n, vector<double>(n, -1));
+  cout << fixed << setprecision(10) << dfs(0, 0, n, dp, p) << ln;
 }
 
 signed main() {
@@ -90,8 +88,8 @@ signed main() {
   freopen("/Users/loona-mac/personal/mind-sport/input.txt", "r", stdin);
   // freopen("/Users/loona-mac/personal/mind-sport/output.txt", "w", stdout);
 #endif
-  int t;
-  cin >> t;
+  int t=1;
+  // cin >> t;
   while (t--) potion();
   return 0;
 }

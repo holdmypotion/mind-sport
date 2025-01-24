@@ -12,8 +12,6 @@ typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
 typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
-typedef set<int> s32;
-typedef set<ll> s64;
 typedef vector<ll> v64;
 typedef vector<int> v32;
 typedef vector<bool> vb;
@@ -66,22 +64,64 @@ void pvv(const vector<T>& vv) {
   }
 }
 
-void potion() {
-  ll n; cin >> n;
-  v64 a(n);
-  forn(i, n) cin >> a[i];
+struct graph {
+  ll n, m;
+  vv64 adj;
+  v64 ts;
+  vb vis;
 
-  // Only for cases where all elements are either odd or even we need to look for k > 2;
-  ll k=2;
-  while (k) {
-    s64 c;
-    for (auto& el: a) c.insert(el % k);
-    if (c.size() == 2) {
-      p(k);
-      return;
-    }
-    else k*=2;
+  graph() = default;
+  graph(ll n) : n(n) {
+    adj.resize(n + 1);
+    vis.resize(n + 1, false);
+  };
+
+  void addEdge(ll a, ll b) {
+    adj[a].pb(b);
   }
+
+  void p() {
+    forsn(i, 1, n+1) {
+      cout << i << ": ";
+      for (auto v: adj[i]) {
+        cout << v << " ";
+      }
+      cout << ln;
+    }
+  }
+
+  void dfs(ll u) {
+    vis[u] = true;
+    for (auto& v : adj[u]) {
+      if (!vis[v]) dfs(v);
+    }
+    ts.pb(u);
+  }
+
+  v64 topSort() {
+    forsn(i, 1, n+1) if (!vis[i]) dfs(i);
+    reverse(all(ts));
+    return ts;
+  }
+};
+
+void potion() {
+  ll n, m; cin >> n >> m;
+  graph g(n);
+  forn(i, m) {
+    ll u, v; cin >> u >> v;
+    g.addEdge(u, v);
+  }
+
+  v64 ts = g.topSort();
+  v64 dp(n+1, 0);
+  for (auto& u: ts) {
+    for (auto& v: g.adj[u]) {
+      dp[v] = max(dp[v], dp[u]+1);
+    }
+  }
+
+  p(*max_element(all(dp)));
 }
 
 signed main() {
@@ -90,8 +130,8 @@ signed main() {
   freopen("/Users/loona-mac/personal/mind-sport/input.txt", "r", stdin);
   // freopen("/Users/loona-mac/personal/mind-sport/output.txt", "w", stdout);
 #endif
-  int t;
-  cin >> t;
+  int t=1;
+  // cin >> t;
   while (t--) potion();
   return 0;
 }

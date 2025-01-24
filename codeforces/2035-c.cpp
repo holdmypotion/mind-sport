@@ -12,8 +12,6 @@ typedef pair<int, int> p32;
 typedef pair<ll, ll> p64;
 typedef tuple<ll, ll, ll> t64;
 typedef pair<double, double> pdd;
-typedef set<int> s32;
-typedef set<ll> s64;
 typedef vector<ll> v64;
 typedef vector<int> v32;
 typedef vector<bool> vb;
@@ -68,19 +66,33 @@ void pvv(const vector<T>& vv) {
 
 void potion() {
   ll n; cin >> n;
-  v64 a(n);
-  forn(i, n) cin >> a[i];
+  v64 ans(n);
+  
+  if (n==6) {
+    // hard coding for n = 6 because k == 2 -> 2^k-1 -> 3 and we need 3 in our solution so it'll repeat otherwise
+    p(7);
+    p("1 2 4 6 5 3");
+  } else if (n&1) {
+    // for odd cases ans can be at most n
+    // last 4 digits can do that
+    // nth digit needs to be n because we'll do that last odd at the nth digit when n is odd
+    // as we are donig | in n-1th digit we can use n-1 there and make sure that we can make 1 in the digits before it as 
+    // when n is odd in terms of bitswise rep, n and n-1 only differ if if the have the first bit set or not.
 
-  // Only for cases where all elements are either odd or even we need to look for k > 2;
-  ll k=2;
-  while (k) {
-    s64 c;
-    for (auto& el: a) c.insert(el % k);
-    if (c.size() == 2) {
-      p(k);
-      return;
-    }
-    else k*=2;
+    p(n);
+    forsn(i, 4, n-1) cout << i << " ";
+    p("2 1 3", n-1, n);
+  } else {
+    // when n is even we even we put it at the last because that is max value that we have
+    // for the remaning number solve it like we solved for odd case.
+    // Find the max number that you can form which < n -> 2^k-1 -> where k is the hight set bit in n
+    // so the ans becomes ... 2, 1, 3, 2^k-2, 2^k-1, n
+    int k = 31 - __builtin_clz(n);
+    ll x = (1<<k)-1;
+    p((x<<1)+1);
+    forsn(i, 4, x-1) cout << i << " ";
+    forsn(i, x+1, n) cout << i << " ";
+    p("2 1 3", x-1, x, n);
   }
 }
 
@@ -90,8 +102,7 @@ signed main() {
   freopen("/Users/loona-mac/personal/mind-sport/input.txt", "r", stdin);
   // freopen("/Users/loona-mac/personal/mind-sport/output.txt", "w", stdout);
 #endif
-  int t;
-  cin >> t;
+  int t; cin >> t;
   while (t--) potion();
   return 0;
 }
