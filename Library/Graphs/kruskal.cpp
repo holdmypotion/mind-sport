@@ -32,10 +32,8 @@ struct graph {
   ll n, m;
   vt64 edges, mst;
   graph() = default;
-  graph(ll n) : n(n) {
-  }
-  graph(ll n, ll m) : n(n), m(m) {
-  }
+  graph(ll n) : n(n) {}
+  graph(ll n, ll m) : n(n), m(m) {}
 
   void addEdge(ll u, ll v, ll w) {
     edges.pb({ u, v, w });
