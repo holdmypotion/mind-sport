@@ -59,18 +59,18 @@ double eps = 1e-12;
 constexpr int mod = 1e9 + 7;
 
 ll coin_combinations(v32& coins, int n, int x) {
-	vv32 dp(n + 1, v32(x + 1, 0));
-	dp[0][0] = 1;
-	forsn(i, 1, n + 1) {
-		forn(j, x + 1) {
-			dp[i][j] = dp[i - 1][j];
-			auto rem = j - coins[i - 1];
-			if (rem >= 0) {
-				(dp[i][j] += dp[i][rem]) %= mod;
-			}
-		}
-	}
-	return dp[n][x];
+  vv32 dp(n + 1, v32(x + 1, 0));
+  dp[0][0] = 1;
+  forsn(i, 1, n + 1) {
+    forn(j, x + 1) {
+      dp[i][j] = dp[i - 1][j];
+      auto rem = j - coins[i - 1];
+      if (rem >= 0) {
+        (dp[i][j] += dp[i][rem]) %= mod;
+      }
+    }
+  }
+  return dp[n][x];
 }
 
 /**
@@ -79,28 +79,28 @@ ll coin_combinations(v32& coins, int n, int x) {
  * rather then trying to compress the state.
  */
 
- // solution
+// solution
 void potion() {
-	// state -> dp[i][x] -> num of distinct coin combinations that add up to x with the first i coins
-	// transition -> dp[i][j] += dp[i][j-coins[i-1]]; // as i represents number of coins
+  // state -> dp[i][x] -> num of distinct coin combinations that add up to x with the first i coins
+  // transition -> dp[i][j] += dp[i][j-coins[i-1]]; // as i represents number of coins
 
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
-	}
+  int n, x; cin >> n >> x;
+  v32 coins(n);
+  forn(i, n) {
+    cin >> coins[i];
+  }
 
-	cout << coin_combinations(coins, n, x);
+  cout << coin_combinations(coins, n, x);
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("test_input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("test_input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate

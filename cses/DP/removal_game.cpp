@@ -59,51 +59,51 @@ constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	// * As both play optimally
-	// * Player 1 -> wants to maximize score1 - score2
-	// * Player 2 -> wants to minimize score1 - score2
-	// ? Hence, there choices at each stage should be same, i.e. optimal.
-	// state: dp[l][r] -> max difference (score1-score2) if considering the interval [l, r]
-	// transition: dp[l][r] = max(nums[l] - dp[l+1][r], nums[r] - dp[l][r-1]);
-	// As dp[l+1][r] contains the optimal choice taken if it was player1's turn
-	// Hence dp[l+1][r] will be player2's best option as well.
-	// ? score1 reduces by nums[l] - dp[l+1][r]
+  // * As both play optimally
+  // * Player 1 -> wants to maximize score1 - score2
+  // * Player 2 -> wants to minimize score1 - score2
+  // ? Hence, there choices at each stage should be same, i.e. optimal.
+  // state: dp[l][r] -> max difference (score1-score2) if considering the interval [l, r]
+  // transition: dp[l][r] = max(nums[l] - dp[l+1][r], nums[r] - dp[l][r-1]);
+  // As dp[l+1][r] contains the optimal choice taken if it was player1's turn
+  // Hence dp[l+1][r] will be player2's best option as well.
+  // ? score1 reduces by nums[l] - dp[l+1][r]
 
-	int n; cin >> n;
-	v32 nums(n);
-	ll sum = 0;
-	for (auto& ele : nums) {
-		cin >> ele;
-		sum += ele;
-	}
+  int n; cin >> n;
+  v32 nums(n);
+  ll sum = 0;
+  for (auto& ele : nums) {
+    cin >> ele;
+    sum += ele;
+  }
 
-	vv64 dp(n, v64(n));
-	for (int l = n - 1; l >= 0;l--) {
-		for (int r = l; r < n; r++) {
-			if (l == r) {
-				dp[l][r] = nums[l];
-			}
-			else {
-				dp[l][r] = max(nums[l] - dp[l + 1][r], nums[r] - dp[l][r - 1]);
-			}
-			cout << dp[l][r] << ln;
-		}
-	}
-	// sum = score1 + score2
-	// dp[0][n-1] = score1 - score2
-	// hence (sum + dp[0][n-1]) / 2 -> score1
-	cout << dp[0][n - 1] << ln;
-	cout << (sum + dp[0][n - 1]) / 2;
+  vv64 dp(n, v64(n));
+  for (int l = n - 1; l >= 0;l--) {
+    for (int r = l; r < n; r++) {
+      if (l == r) {
+        dp[l][r] = nums[l];
+      }
+      else {
+        dp[l][r] = max(nums[l] - dp[l + 1][r], nums[r] - dp[l][r - 1]);
+      }
+      cout << dp[l][r] << ln;
+    }
+  }
+  // sum = score1 + score2
+  // dp[0][n-1] = score1 - score2
+  // hence (sum + dp[0][n-1]) / 2 -> score1
+  cout << dp[0][n - 1] << ln;
+  cout << (sum + dp[0][n - 1]) / 2;
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

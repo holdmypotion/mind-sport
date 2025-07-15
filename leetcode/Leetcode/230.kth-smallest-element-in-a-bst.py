@@ -13,21 +13,20 @@
 #         self.right = right
 class Solution:
     def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
-        stack = []
+        def dfs(root):
+            nonlocal k
+            if not root:
+                return -1
 
-        while root or stack:
-            while root:
-                stack.append(root)
-                root = root.left
-
-            root = stack.pop()
+            val = dfs(root.left)
             k -= 1
             if k == 0:
                 return root.val
+            val = max(val, dfs(root.right))
+            return val
 
-            root = root.right
+        return dfs(root)
 
-        return -1
         
 # @lc code=end
 

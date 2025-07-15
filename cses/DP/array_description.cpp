@@ -58,57 +58,57 @@ double eps = 1e-12;
 constexpr int mod = 1e9 + 7;
 
 int max_arrays(int n, int m) {
-	vv32 dp(n, v32(m + 1, 0));
-	int first; cin >> first;
-	if (first == 0) {
-		fill(all(dp[0]), 1);
-	}
-	else {
-		dp[0][first] = 1;
-	}
+  vv32 dp(n, v32(m + 1, 0));
+  int first; cin >> first;
+  if (first == 0) {
+    fill(all(dp[0]), 1);
+  }
+  else {
+    dp[0][first] = 1;
+  }
 
-	for (int i = 1; i < n; i++) {
-		int ele; cin >> ele;
-		if (ele == 0) {  // ith element can be anything. Check all the possibilities
-			for (int j = 1; j <= m; j++) {
-				for (int k : {j - 1, j, j + 1}) {
-					if (k >= 1 && k <= m) {
-						(dp[i][j] += dp[i - 1][k]) %= mod;
-					}
-				}
-			}
-		}
-		else {  // ith element is `ele`. Check in the vicinity of `ele`
-			for (int k : {ele - 1, ele, ele + 1}) {
-				if (k >= 1 && k <= m) {
-					(dp[i][ele] += dp[i - 1][k]) %= mod;
-				}
-			}
-		}
-	}
+  for (int i = 1; i < n; i++) {
+    int ele; cin >> ele;
+    if (ele == 0) {  // ith element can be anything. Check all the possibilities
+      for (int j = 1; j <= m; j++) {
+        for (int k : {j - 1, j, j + 1}) {
+          if (k >= 1 && k <= m) {
+            (dp[i][j] += dp[i - 1][k]) %= mod;
+          }
+        }
+      }
+    }
+    else {  // ith element is `ele`. Check in the vicinity of `ele`
+      for (int k : {ele - 1, ele, ele + 1}) {
+        if (k >= 1 && k <= m) {
+          (dp[i][ele] += dp[i - 1][k]) %= mod;
+        }
+      }
+    }
+  }
 
-	int ans = 0;
-	// Get all the valid arrays of size n, i.e. ending at index `n-1`
-	for (int j = 1; j <= m; j++) (ans += dp[n - 1][j]) %= mod;
-	return ans;
+  int ans = 0;
+  // Get all the valid arrays of size n, i.e. ending at index `n-1`
+  for (int j = 1; j <= m; j++) (ans += dp[n - 1][j]) %= mod;
+  return ans;
 }
 
 // solution
 void potion() {
-	// state: dp[i][x] -> max no. of arrays till index i with last element x, i.e input[i] = x;
-	// transition: dp[i][j] = dp[i-1][j-1] + dp[i-1][j] + dp[i-1][j+1];
-	int n, m; cin >> n >> m;
-	cout << max_arrays(n, m);
+  // state: dp[i][x] -> max no. of arrays till index i with last element x, i.e input[i] = x;
+  // transition: dp[i][j] = dp[i-1][j-1] + dp[i-1][j] + dp[i-1][j+1];
+  int n, m; cin >> n >> m;
+  cout << max_arrays(n, m);
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

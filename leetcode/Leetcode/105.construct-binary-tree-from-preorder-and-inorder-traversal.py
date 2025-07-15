@@ -19,7 +19,7 @@ class Solution:
 
         # if not preorder or not inorder:
         #     return None
-        
+
         # root = TreeNode(preorder[0]) # preorder[0] -> root for this subtree
         # mid = inorder.index(root.val) # left sub array is the left subtree | right sub array is the right subtree
         # # preorder[1:mid+1] -> left subtree  | inorder[:mid] -> left subtree
@@ -40,10 +40,10 @@ class Solution:
 
             if l > r:
                 return None
-            
+
             root = TreeNode(preorder[rootIdx])
             rootIdx += 1
-            mid = indices[root.val] 
+            mid = indices[root.val]
             # Because mid is already the root
             root.left = dfs(l, mid-1)
             root.right = dfs(mid+1, r)

@@ -19,7 +19,7 @@ class Solution:
                 stack.append(bracket)
             elif not stack or bracket != pair_map[stack.pop()]:
                 return False
-        
+
         return len(stack) == 0
         
 # @lc code=end

@@ -57,56 +57,56 @@ double eps = 1e-12;
 #define sz(x) ((ll)(x).size())
 
 int minimum_coins(v32& coins, int n, int x) {
-	v64 dp(x + 1, INF);
-	dp[0] = 0;
-	/**
-	 * target: 11
-	 * num of coins: 3 -> {1, 5, 7}
-	 * solution: min num of coins needed to make target.
-	 *
-	 * * Approach:
-	 * ? Start from 0 reach target!
-	 * 0-> 0 coins needed
-	 * 1-> 1 coins needed
-	 * 2-> 2 coins needed
-	 * 4-> 4 coins needed
-	 * 5-> 1 coins needed
-	 * 6-> 2 coins needed
-	 * min(3, dp[11 - 5] + 1)
-	 * 11 -> 1: 1+ (dp[11-1])-> dp[10] -> 2 = 3
-	 * 			 5: 1+ (dp[11-5])-> dp[6] -> 2 = 3
-	 *       7: 1+ (dp[11-7])-> dp[4] -> 4 = 5
-	 */
-	forn(i, x + 1) {
-		for (int j = 0; j < n && i >= coins[j]; j++) {
-			dp[i] = min(dp[i], dp[i - coins[j]] + 1);
-		}
-	}
-	return (dp[x] == INF ? -1 : dp[x]);
+  v64 dp(x + 1, INF);
+  dp[0] = 0;
+  /**
+   * target: 11
+   * num of coins: 3 -> {1, 5, 7}
+   * solution: min num of coins needed to make target.
+   *
+   * * Approach:
+   * ? Start from 0 reach target!
+   * 0-> 0 coins needed
+   * 1-> 1 coins needed
+   * 2-> 2 coins needed
+   * 4-> 4 coins needed
+   * 5-> 1 coins needed
+   * 6-> 2 coins needed
+   * min(3, dp[11 - 5] + 1)
+   * 11 -> 1: 1+ (dp[11-1])-> dp[10] -> 2 = 3
+   * 			 5: 1+ (dp[11-5])-> dp[6] -> 2 = 3
+   *       7: 1+ (dp[11-7])-> dp[4] -> 4 = 5
+   */
+  forn(i, x + 1) {
+    for (int j = 0; j < n && i >= coins[j]; j++) {
+      dp[i] = min(dp[i], dp[i - coins[j]] + 1);
+    }
+  }
+  return (dp[x] == INF ? -1 : dp[x]);
 }
 
 // solution
 void potion() {
-	// state -> dp[i] -> min num of coins required to make i
-	// transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
+  // state -> dp[i] -> min num of coins required to make i
+  // transition -> dp[i] = min(dp[i], dp[i - coins[j]] + 1)
 
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
-	}
+  int n, x; cin >> n >> x;
+  v32 coins(n);
+  forn(i, n) {
+    cin >> coins[i];
+  }
 
-	cout << minimum_coins(coins, n, x);
+  cout << minimum_coins(coins, n, x);
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate

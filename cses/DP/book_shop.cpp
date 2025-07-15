@@ -58,19 +58,19 @@ double eps = 1e-12;
 constexpr int mod = 1e9 + 7;
 
 int max_pages(v32 price, v32 pages, int n, int x) {
-	vv32 dp(n + 1, v32(x + 1, 0));
+  vv32 dp(n + 1, v32(x + 1, 0));
 
-	for (int i = 1; i <= n; i++) {
-		for (int j = 1; j <= x; j++) {
-			dp[i][j] = dp[i - 1][j];
-			int remaining = j - price[i - 1];
-			if (remaining >= 0) {
-				dp[i][j] = max(dp[i][j], dp[i - 1][remaining] + pages[i - 1]);
-			}
-		}
-	}
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= x; j++) {
+      dp[i][j] = dp[i - 1][j];
+      int remaining = j - price[i - 1];
+      if (remaining >= 0) {
+        dp[i][j] = max(dp[i][j], dp[i - 1][remaining] + pages[i - 1]);
+      }
+    }
+  }
 
-	return dp[n][x];
+  return dp[n][x];
 }
 
 /**
@@ -79,31 +79,31 @@ int max_pages(v32 price, v32 pages, int n, int x) {
  * rather then trying to compress the state.
  */
 
- // solution
+// solution
 void potion() {
-	// state: dp[i][j] -> max pages for price under j with first i books.
-	// transition: dp[i][j] = max(dp[i][j], dp[i][j - price[i-1]] + pages[i-1]);
-	int n, target; cin >> n >> target;
-	v32 price(n), pages(n);
-	for (int i = 0; i < n; i++) {
-		cin >> price[i];
-	}
+  // state: dp[i][j] -> max pages for price under j with first i books.
+  // transition: dp[i][j] = max(dp[i][j], dp[i][j - price[i-1]] + pages[i-1]);
+  int n, target; cin >> n >> target;
+  v32 price(n), pages(n);
+  for (int i = 0; i < n; i++) {
+    cin >> price[i];
+  }
 
-	for (int i = 0; i < n; i++) {
-		cin >> pages[i];
-	}
+  for (int i = 0; i < n; i++) {
+    cin >> pages[i];
+  }
 
-	cout << max_pages(price, pages, n, target);
+  cout << max_pages(price, pages, n, target);
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate

@@ -9,7 +9,7 @@ struct BIT {
 
   void add(ll k, ll x) {
     // adding the element to the array
-    arr[k] += x;
+    arr[k] = x;
 
     // adding the element to binary indexed tree
     while (k <= n) {

@@ -60,32 +60,32 @@ constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	int base; cin >> base;
-	// col -> number of columns of squares that can be in the triangle
-	// the '-1' at the end is just extra as we are dealing with a triangle not a square
+  int base; cin >> base;
+  // col -> number of columns of squares that can be in the triangle
+  // the '-1' at the end is just extra as we are dealing with a triangle not a square
 
-	int side = 2, col = (base / 2) - 1;
-	int base_taken = 2, count = 0;
-	for (int i = 1; i <= col; i++) {
-		// in a right angled isosceles triangle if you shoot a perpendicular on the base
-		// the side with the pointy thingy forms another isosceles triangle.
-		// checkout the sol.png
-		int height = base - base_taken;
-		count += height / side;
-		base_taken += 2;
-	}
+  int side = 2, col = (base / 2) - 1;
+  int base_taken = 2, count = 0;
+  for (int i = 1; i <= col; i++) {
+    // in a right angled isosceles triangle if you shoot a perpendicular on the base
+    // the side with the pointy thingy forms another isosceles triangle.
+    // checkout the sol.png
+    int height = base - base_taken;
+    count += height / side;
+    base_taken += 2;
+  }
 
-	cout << count << ln;
+  cout << count << ln;
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

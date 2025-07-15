@@ -59,49 +59,49 @@ double eps = 1e-12;
 constexpr int mod = 1e9 + 7;
 
 ll coin_combinations(v32& coins, int n, int x) {
-	v64 dp(x + 1, 0);
-	dp[0] = 1;
-	forn(i, x + 1) {
-		forn(j, n) {
-			if (i >= coins[j]) {
-				(dp[i] += dp[i - coins[j]]) %= mod;
-			}
-		}
-	}
+  v64 dp(x + 1, 0);
+  dp[0] = 1;
+  forn(i, x + 1) {
+    forn(j, n) {
+      if (i >= coins[j]) {
+        (dp[i] += dp[i - coins[j]]) %= mod;
+      }
+    }
+  }
 
-	return dp[x];
+  return dp[x];
 }
 
 // solution
 void potion() {
-	// state -> dp[i] -> num of coin combinations required to make i
-	// transition -> dp[i] += dp[i-coins[j]])
-	/**
-	 * dp[0]-> 1;
-	 * dp[1]-> 0;
-	 * dp[2]-> 1
-	 * dp[3]-> 1
-	 * dp[4]-> dp[4] += dp[4-coins[j]])
-	 * dp[5]-> dp[5] += dp[5-coins[j]])
-	 */
+  // state -> dp[i] -> num of coin combinations required to make i
+  // transition -> dp[i] += dp[i-coins[j]])
+  /**
+   * dp[0]-> 1;
+   * dp[1]-> 0;
+   * dp[2]-> 1
+   * dp[3]-> 1
+   * dp[4]-> dp[4] += dp[4-coins[j]])
+   * dp[5]-> dp[5] += dp[5-coins[j]])
+   */
 
-	int n, x; cin >> n >> x;
-	v32 coins(n);
-	forn(i, n) {
-		cin >> coins[i];
-	}
+  int n, x; cin >> n >> x;
+  v32 coins(n);
+  forn(i, n) {
+    cin >> coins[i];
+  }
 
-	cout << coin_combinations(coins, n, x);
+  cout << coin_combinations(coins, n, x);
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate

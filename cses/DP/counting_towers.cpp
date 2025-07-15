@@ -60,43 +60,46 @@ constexpr int mxn = 1e6 + 6;
 
 // solution
 void potion() {
-	// state: dp[i][w] -> max no. of blocks for height i and width w
-	// dp[i][1] = last blocks are separate | || |
-	// dp[i][2] = last blocks are fused |   |
+  // state: dp[i][w] -> max no. of blocks for height i and width w
+  // dp[i][1] = last blocks are separate | || |
+  // dp[i][2] = last blocks are fused |   |
 
-	// transition:
-	//              _  _    _  _    _  _    _  _     _ _
-	//  _  _       | || |  |_|| |  | ||_|  |_||_|   |_ _|
-	// | || | =>   | || |, | || |, | || |, | || |,  | | |
-	//              _ _    _ _    _ _ 
-	//  _ _        |   |  |_|_|  |_ _|
-	// |   |  =>   |   |, |   |, |   |
-	// dp[i][1] = dp[i-1][1]*4 + dp[i-1][2]
-	// dp[i][2] = dp[i-1][1] + dp[i-1][2]*2	/**
+  // transition:
+  //              _  _    _  _    _  _    _  _        _ _
+  //  _  _       | || |  |_|| |  | ||_|  |_||_|      |_ _|
+  // | || | =>   | || |, | || |, | || |, | || |,     | | |
+  //            [_________dp[x-1][1]__________]  [_dp[x-1][2]_]
+  //              _ _    _ _         _ _
+  //  _ _        |   |  |_ _|       |_|_|
+  // |   |  =>   |   |, |   |,      |   |
+  //            [_dp[x-1][2]_]  [_dp[x-1][1]_]
+  //
+  // dp[i][1] = dp[i-1][1]*4 + dp[i-1][2]
+  // dp[i][2] = dp[i-1][1] + dp[i-1][2]*2	/**
 
-	vv64 dp(mxn, v64(3));
-	dp[1][1] = dp[1][2] = 1;
+  vv64 dp(mxn, v64(3));
+  dp[1][1] = dp[1][2] = 1;
 
-	forsn(i, 2, mxn) {
-		dp[i][1] = ((dp[i - 1][1] * 4) % mod + dp[i - 1][2]) % mod;
-		dp[i][2] = (dp[i - 1][1] + (dp[i - 1][2] * 2) % mod) % mod;
-	}
+  forsn(i, 2, mxn) {
+    dp[i][1] = ((dp[i - 1][1] * 4) % mod + dp[i - 1][2]) % mod;
+    dp[i][2] = (dp[i - 1][1] + (dp[i - 1][2] * 2) % mod) % mod;
+  }
 
-	int t; cin >> t;
-	while (t--) {
-		int n; cin >> n;
-		cout << (dp[n][1] + dp[n][2]) % mod << ln;
-	}
+  int t; cin >> t;
+  while (t--) {
+    int n; cin >> n;
+    cout << (dp[n][1] + dp[n][2]) % mod << ln;
+  }
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

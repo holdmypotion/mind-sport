@@ -59,43 +59,43 @@ constexpr int mod = 1e9 + 7;
 
 // solution
 void potion() {
-	// state: dp[i][j] -> no. of cuts needed to all square of a i * j rectangle
-	// transition: for each (i, j) pair there are k (1 < k < i or 1 < k < j) possibilities of a cut.
-	// 
-	int a, b; cin >> a >> b;
-	vv32 dp(a + 1, v32(b + 1));
+  // state: dp[i][j] -> no. of cuts needed to all square of a i * j rectangle
+  // transition: for each (i, j) pair there are k (1 < k < i or 1 < k < j) possibilities of a cut.
+  // 
+  int a, b; cin >> a >> b;
+  vv32 dp(a + 1, v32(b + 1));
 
-	forn(i, a + 1) {
-		forn(j, b + 1) {
-			if (i == j) dp[i][j] = 0;
-			else {
-				dp[i][j] = INT_MAX;
-				forsn(k, 1, j) {
-					// trying all the horizontal cuts
-					dp[i][j] = min(dp[i][j], dp[i][k] + dp[i][j - k] + 1);
-				}
-				forsn(k, 1, i) {
-					// trying all the vertical cuts
-					dp[i][j] = min(dp[i][j], dp[k][j] + dp[i - k][j] + 1);
-				}
-			}
-		}
-	}
-	// for (auto& r : dp) {
-	// 	for (auto& ele : r) cout << ele << " ";
-	// 	cout << ln;
-	// }
-	cout << dp[a][b];
+  forn(i, a + 1) {
+    forn(j, b + 1) {
+      if (i == j) dp[i][j] = 0;
+      else {
+        dp[i][j] = INT_MAX;
+        forsn(k, 1, j) {
+          // trying all the horizontal cuts
+          dp[i][j] = min(dp[i][j], dp[i][k] + dp[i][j - k] + 1);
+        }
+        forsn(k, 1, i) {
+          // trying all the vertical cuts
+          dp[i][j] = min(dp[i][j], dp[k][j] + dp[i - k][j] + 1);
+        }
+      }
+    }
+  }
+  // for (auto& r : dp) {
+  // 	for (auto& ele : r) cout << ele << " ";
+  // 	cout << ln;
+  // }
+  cout << dp[a][b];
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate!

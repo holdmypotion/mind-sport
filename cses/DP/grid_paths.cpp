@@ -58,54 +58,54 @@ double eps = 1e-12;
 
 constexpr int mod = 1e9 + 7;
 
-int	print_paths(vector<string> grid, int n) {
-	if (grid[n - 1][n - 1] == '*' || grid[0][0] == '*') return 0;
-	if (grid.size() == 1) return 1;
+int print_paths(vector<string> grid, int n) {
+  if (grid[n - 1][n - 1] == '*' || grid[0][0] == '*') return 0;
+  if (grid.size() == 1) return 1;
 
-	vv32 dp(n, v32(n, 0));
-	for (int i = n - 2; i >= 0; i--) {
-		if (grid[i][n - 1] == '*') break;
-		dp[i][n - 1] = 1;
-	}
+  vv32 dp(n, v32(n, 0));
+  for (int i = n - 2; i >= 0; i--) {
+    if (grid[i][n - 1] == '*') break;
+    dp[i][n - 1] = 1;
+  }
 
-	for (int j = n - 2; j >= 0; j--) {
-		if (grid[n - 1][j] == '*') break;
-		dp[n - 1][j] = 1;
-	}
+  for (int j = n - 2; j >= 0; j--) {
+    if (grid[n - 1][j] == '*') break;
+    dp[n - 1][j] = 1;
+  }
 
-	for (int i = n - 2; i >= 0; i--) {
-		for (int j = n - 2; j >= 0; j--) {
-			if (grid[i][j] == '*') continue;
-			(dp[i][j] = dp[i + 1][j] + dp[i][j + 1]) %= mod;
-		}
-	}
+  for (int i = n - 2; i >= 0; i--) {
+    for (int j = n - 2; j >= 0; j--) {
+      if (grid[i][j] == '*') continue;
+      (dp[i][j] = dp[i + 1][j] + dp[i][j + 1]) %= mod;
+    }
+  }
 
-	// for (auto& r : dp) {
-	// 	for (auto& ele : r) cout << ele << " ";
-	// 	cout << ln;
-	// }
-	return dp[0][0];
+  // for (auto& r : dp) {
+  // 	for (auto& ele : r) cout << ele << " ";
+  // 	cout << ln;
+  // }
+  return dp[0][0];
 }
 
 // solution
 void potion() {
-	int n; cin >> n;
-	vector<string> grid(n);
-	for (auto& ele : grid) {
-		cin >> ele;
-	}
+  int n; cin >> n;
+  vector<string> grid(n);
+  for (auto& ele : grid) {
+    cin >> ele;
+  }
 
-	cout << print_paths(grid, n);
+  cout << print_paths(grid, n);
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate

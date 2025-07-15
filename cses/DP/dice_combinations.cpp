@@ -57,27 +57,27 @@ double eps = 1e-12;
 constexpr int mod = 1e9 + 7;
 
 void potion() {
-	int n; cin >> n;
-	vector<int> dp(n + 1, 0);
+  int n; cin >> n;
+  vector<int> dp(n + 1, 0);
 
-	dp[0] = 1;
-	for (int i = 1; i <= n; i++) {
-		for (int j = 1; j <= 6 && i - j >= 0; j++) {
-			(dp[i] += dp[i - j]) % mod;
-		}
-	}
+  dp[0] = 1;
+  for (int i = 1; i <= n; i++) {
+    for (int j = 1; j <= 6 && i - j >= 0; j++) {
+      (dp[i] += dp[i - j]) % mod;
+    }
+  }
 
-	cout << dp[n] << ln;
+  cout << dp[n] << ln;
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate

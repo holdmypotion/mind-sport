@@ -58,26 +58,26 @@ double eps = 1e-12;
 
 // solution
 void potion() {
-	int n, count = 0; cin >> n;
-	v32 dp(n + 1, INT_MAX);
+  int n, count = 0; cin >> n;
+  v32 dp(n + 1, INT_MAX);
 
-	dp[0] = 0;
-	forn(i, n + 1) {
-		for (char& ch : to_string(i)) {
-			dp[i] = min(dp[i], dp[i - (ch - '0')] + 1);
-		}
-	}
-	cout << dp[n];
+  dp[0] = 0;
+  forn(i, n + 1) {
+    for (char& ch : to_string(i)) {
+      dp[i] = min(dp[i], dp[i - (ch - '0')] + 1);
+    }
+  }
+  cout << dp[n];
 }
 
 signed main() {
-	fast_cin();
+  fast_cin();
 #ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	freopen("output.txt", "w", stdout);
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
 #endif
-	ll t = 1;
-	// cin >> t;
-	while (t--) potion();
-	return 0;
+  ll t = 1;
+  // cin >> t;
+  while (t--) potion();
+  return 0;
 } // Alright then, mate
