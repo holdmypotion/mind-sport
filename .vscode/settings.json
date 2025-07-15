@@ -28,5 +28,8 @@
   "C_Cpp.errorSquiggles": "Disabled",
   "cSpell.words": [
     "invhash"
+  ],
+  "cursor.cpp.disabledLanguages": [
+    "python"
   ]
 }
